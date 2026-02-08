@@ -7,7 +7,7 @@ import os
 import time
 
 # Configurare Mobil
-st.set_page_config(page_title="Loto Polonia v9.8", page_icon="📈", layout="centered")
+st.set_page_config(page_title="Loto 20/80 v9.9", page_icon="📩", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
 PAROLA_ADMIN = "admin13$clover$13" # Schimbă aici!
@@ -17,10 +17,11 @@ def incarca_tot():
         try:
             with open(DB_FILE, "r") as f:
                 date = json.load(f)
-                if isinstance(date, list): return {"extrageri": date, "vizite": 0}
+                if isinstance(date, list): return {"extrageri": date, "vizite": 0, "mesaje": []}
+                if "mesaje" not in date: date["mesaje"] = []
                 return date
-        except: return {"extrageri": [], "vizite": 0}
-    return {"extrageri": [], "vizite": 0}
+        except: return {"extrageri": [], "vizite": 0, "mesaje": []}
+    return {"extrageri": [], "vizite": 0, "mesaje": []}
 
 def salveaza_tot(date_complete):
     with open(DB_FILE, "w") as f: json.dump(date_complete, f)
@@ -32,34 +33,56 @@ if 'numarat' not in st.session_state:
     salveaza_tot(date_sistem)
     st.session_state['numarat'] = True
 
-st.title("🚀 Loto Polonia20/80 v9.8")
+st.title("🚀 Loto 20/80 v9.9")
 
 # --- AFISARE SIMBOL "OO" ---
 st.markdown(f"<div style='text-align: right; margin-top: -55px;'><span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 2px solid #22d3ee; padding: 4px 12px; border-radius: 15px; background-color: rgba(34, 211, 238, 0.1);'>OO: {date_sistem.get('vizite', 0)}</span></div>", unsafe_allow_html=True)
 
-# --- ADMIN PANEL ---
+# --- ADMIN PANEL (SIDEBAR) ---
 st.sidebar.subheader("🔐 Panou Control Admin")
 parola_introdusa = st.sidebar.text_input("Parola:", type="password")
 este_admin = (parola_introdusa == PAROLA_ADMIN)
 
 if este_admin:
-    with st.expander("⚙️ GESTIONARE DATE (ACTIV)", expanded=True):
-        raw_input = st.text_input("Introdu extragerea nouă:")
+    with st.expander("⚙️ GESTIONARE DATE & MESAJE", expanded=True):
+        st.subheader("📬 Mesaje Primite")
+        if date_sistem.get("mesaje"):
+            for m in reversed(date_sistem["mesaje"]):
+                st.info(f"📅 {m['data']}\n💬 {m['text']}")
+            if st.button("🗑️ Șterge toate mesajele"):
+                date_sistem["mesaje"] = []; salveaza_tot(date_sistem); st.rerun()
+        else: st.write("Niciun mesaj nou.")
+        
+        st.divider()
+        st.subheader("📈 Control Loto")
+        raw_input = st.text_input("Introdu extragerea nouă (20 nr):")
         col_a, col_b = st.columns(2)
         with col_a:
             if st.button("💾 Salvează"):
-                try:
-                    numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
-                    if len(numere) == 20:
-                        if "extrageri" not in date_sistem: date_sistem["extrageri"] = []
-                        date_sistem["extrageri"].insert(0, numere)
-                        salveaza_tot(date_sistem); st.success("✅ Salvat!"); st.rerun()
-                except: st.error("Eroare format!")
+                numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
+                if len(numere) == 20:
+                    date_sistem["extrageri"].insert(0, numere)
+                    salveaza_tot(date_sistem); st.success("✅ Salvat!"); st.rerun()
         with col_b:
             if st.button("🗑️ Șterge Ultima"):
                 if date_sistem.get("extrageri"):
-                    date_sistem["extrageri"].pop(0); salveaza_tot(date_sistem)
-                    st.warning("Șters!"); st.rerun()
+                    date_sistem["extrageri"].pop(0); salveaza_tot(date_sistem); st.warning("Șters!"); st.rerun()
+
+# --- 📩 CASUTA DE MESAJE (PENTRU UTILIZATORI) ---
+st.divider()
+with st.expander("📩 Trimite un mesaj Admin-ului"):
+    msg_text = st.text_area("Scrie aici mesajul tău (anonim):", height=100)
+    if st.button("🚀 Trimite Mesajul"):
+        if msg_text.strip():
+            nou_msg = {
+                "data": time.strftime("%d-%m %H:%M"),
+                "text": msg_text
+            }
+            date_sistem["mesaje"].append(nou_msg)
+            salveaza_tot(date_sistem)
+            st.success("✅ Mesajul a fost trimis către Admin!")
+            time.sleep(1); st.rerun()
+        else: st.error("Scrie ceva înainte de a trimite!")
 
 # --- MIXER MANUAL ---
 st.divider()
@@ -91,12 +114,11 @@ if date_loto:
             for _ in range(3): st.code(sorted(random.sample(g_b, 4)))
     with tab3: st.dataframe(pd.DataFrame(date_loto), use_container_width=True)
 
-# --- 🎁 BUTONUL SURPRIZĂ (v9.8 FUNNY EDITION) ---
+# --- 🎁 BUTONUL SURPRIZĂ ---
 st.divider()
 if st.button("🎁 SURPRIZĂ"):
-    st.balloons()
-    
-    mesaje_funny = [
+    st.balloons(); st.snow()
+        mesaje_funny = [
         "Sistemul zice că ești la un bilet distanță de a-ți lua un i9! 💻",
         "Dacă iese 11 diseară, dăm liber la bere! 🍻",
         "Algoritmul a calculat: Norocul tău e mai mare decât baza de date! 📈",
@@ -111,6 +133,7 @@ if st.button("🎁 SURPRIZĂ"):
     
     st.info(random.choice(mesaje_funny))
     st.snow()
+
 
 
 
