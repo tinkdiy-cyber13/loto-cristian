@@ -115,7 +115,8 @@ if date_loto:
 st.divider()
 if st.button("🎁 SURPRIZĂ"):
     st.balloons()
-    st.info("Baftă maximă, Cristian! Ești la vizita numărul " + str(date_sistem.get('vizite', 0)) + "! 🚀")
+    st.info("Mult NOROC! " + str(date_sistem.get('vizite', 0)) + "! 🚀")
+
 
 
 
