@@ -7,35 +7,43 @@ import os
 import time
 
 # Configurare Mobil
-st.set_page_config(page_title="Loto Pro v9.4", page_icon="📈", layout="centered")
+st.set_page_config(page_title="Loto Pro v9.5", page_icon="📈", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
 PAROLA_ADMIN = "admin123" 
 
-# --- FUNCTII BAZA DE DATE ---
+# --- FUNCTII BAZA DE DATE (REPARATE) ---
 def incarca_tot():
     if os.path.exists(DB_FILE):
-        with open(DB_FILE, "r") as f:
-            return json.load(f)
+        try:
+            with open(DB_FILE, "r") as f:
+                date = json.load(f)
+                # Daca datele sunt in format vechi (doar o lista), le convertim
+                if isinstance(date, list):
+                    return {"extrageri": date, "vizite": 0}
+                return date
+        except:
+            return {"extrageri": [], "vizite": 0}
     return {"extrageri": [], "vizite": 0}
 
 def salveaza_tot(date_complete):
     with open(DB_FILE, "w") as f:
         json.dump(date_complete, f)
 
-# --- INITIALIZARE SI CONTORIZARE ---
+# --- INITIALIZARE ---
 date_sistem = incarca_tot()
 
-# Daca e o sesiune noua, crestem numarul de accesari
+# Contorizam doar la inceputul sesiunii
 if 'numarat' not in st.session_state:
-    date_sistem["vizite"] = date_sistem.get("vizite", 0) + 1
+    vizite_actuale = date_sistem.get("vizite", 0) + 1
+    date_sistem["vizite"] = vizite_actuale
     salveaza_tot(date_sistem)
     st.session_state['numarat'] = True
 
-st.title("🚀 Loto Cristian v9.4")
+st.title("🚀 Loto Cristian v9.5")
 
-# --- AFISARE CONTOR (Mic si discret, sus in dreapta) ---
-st.markdown(f"<p style='text-align: right; color: gray; font-size: 12px;'>S: {date_sistem['vizite']}</p>", unsafe_allow_html=True)
+# --- AFISARE CONTOR DISCRET ---
+st.markdown(f"<p style='text-align: right; color: gray; font-size: 12px;'>S: {date_sistem.get('vizite', 0)}</p>", unsafe_allow_html=True)
 
 # --- ADMIN PANEL ---
 st.sidebar.subheader("🔐 Panou Control Admin")
@@ -48,14 +56,17 @@ if este_admin:
         col_a, col_b = st.columns(2)
         with col_a:
             if st.button("💾 Salvează"):
-                numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
-                if len(numere) == 20:
-                    date_sistem["extrageri"].insert(0, numere)
-                    salveaza_tot(date_sistem)
-                    st.success("✅ Salvat!"); st.rerun()
+                try:
+                    numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
+                    if len(numere) == 20:
+                        if "extrageri" not in date_sistem: date_sistem["extrageri"] = []
+                        date_sistem["extrageri"].insert(0, numere)
+                        salveaza_tot(date_sistem)
+                        st.success("✅ Salvat!"); st.rerun()
+                except: st.error("Format numere greșit!")
         with col_b:
             if st.button("🗑️ Șterge Ultima"):
-                if date_sistem["extrageri"]:
+                if date_sistem.get("extrageri"):
                     date_sistem["extrageri"].pop(0)
                     salveaza_tot(date_sistem)
                     st.warning("Șters!"); st.rerun()
@@ -69,10 +80,10 @@ with st.expander("🎲 Mixer Manual"):
             mele = [int(n) for n in input_manual.replace(",", " ").split() if n.strip().isdigit()]
             if len(mele) >= 4:
                 for i in range(5): st.success(f"V{i+1}: {sorted(random.sample(mele, 4))}")
-        except: st.error("Eroare!")
+        except: st.error("Eroare la procesare!")
 
 # --- ANALIZA ȘI ARHIVA ---
-date_loto = date_sistem["extrageri"]
+date_loto = date_sistem.get("extrageri", [])
 if date_loto:
     st.divider()
     tab1, tab2, tab3 = st.tabs(["🎰 MIX AUTO", "📊 STRATEGIE", "📜 REZULTATE"])
@@ -98,8 +109,5 @@ if date_loto:
 st.divider()
 if st.button("🎁 SURPRIZĂ"):
     st.balloons()
-    mesaje = ["Cristian, ești de neoprit! 🚀", "11 este pe drum! 🎯", "Succes maxim, Admin! 🎰"]
-    st.info(random.choice(mesaje))
-
-
+    st.info("Baftă maximă, Cristian! i5-ul tău e la butoane. 🚀")
 
