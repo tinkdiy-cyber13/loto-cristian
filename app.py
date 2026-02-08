@@ -94,10 +94,15 @@ if st.button("🎁 APASĂ PENTRU SURPRIZĂ"):
         "Norocul și-l face omul cu mâna lui (și cu Python)! 🐍",
         "Ești oficial cel mai tehnologizat jucător de loto! 🎰",
         "Berea aia de care ziceai? Să fie una câștigătoare! 🍻",
-        "11 este pe drum, simt eu! 🎯"
+        "11 este pe drum, simt eu! 🎯",
+        "SUCCES TUTUROR !",
+        "MULT NOROC !",
+        "BAFTA !",
+        "O ZI NOROCOASA!",
     ]
     st.info(random.choice(mesaje))
     st.snow() # Efect de zăpadă/particule
+
 
 
 
