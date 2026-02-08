@@ -6,7 +6,7 @@ import json
 import os
 
 # Configurare Mobil
-st.set_page_config(page_title="Loto Pro v9.1", page_icon="🔐", layout="centered")
+st.set_page_config(page_title="Loto Pro v9.2", page_icon="📜", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
 PAROLA_ADMIN = "admin123" # <--- SCHIMBĂ PAROLA AICI!
@@ -21,21 +21,16 @@ def salveaza_date(date):
     with open(DB_FILE, "w") as f:
         json.dump(date, f)
 
-st.title("🚀 Loto Cristian v9.1")
+st.title("🚀 Loto Cristian v9.2")
 
-# --- SISTEM DE AUTENTIFICARE ---
-st.sidebar.subheader("🔐 Acces Admin")
-parola_introdusa = st.sidebar.text_input("Introdu Parola:", type="password")
+# --- SISTEM DE AUTENTIFICARE (DOAR PENTRU MODIFICĂRI) ---
+st.sidebar.subheader("🔐 Panou Control Admin")
+parola_introdusa = st.sidebar.text_input("Introdu Parola pentru Modificări:", type="password")
 este_admin = (parola_introdusa == PAROLA_ADMIN)
 
+# --- 1. GESTIONARE DATE (DOAR CU PAROLĂ) ---
 if este_admin:
-    st.sidebar.success("Ești conectat ca Admin!")
-else:
-    st.sidebar.warning("Introdu parola pentru a gestiona datele.")
-
-# --- 1. GESTIONARE DATE (Protejat) ---
-if este_admin:
-    with st.expander("➕ Adaugă / Șterge Extrageri (PROTEJAT)", expanded=True):
+    with st.expander("⚙️ ADMIN: Adaugă / Șterge (ACTIV)", expanded=True):
         raw_input = st.text_input("Introdu extragerea nouă (20 numere):")
         col_a, col_b = st.columns(2)
         with col_a:
@@ -48,7 +43,7 @@ if este_admin:
                         salveaza_date(date_curente[:20])
                         st.success("✅ Salvat!")
                         st.rerun()
-                except: st.error("Eroare la numere!")
+                except: st.error("Eroare format!")
         with col_b:
             if st.button("🗑️ Șterge Ultima"):
                 date_curente = incarca_date()
@@ -57,25 +52,27 @@ if este_admin:
                     salveaza_date(date_curente)
                     st.warning("Șters!")
                     st.rerun()
+else:
+    st.sidebar.info("Modificările sunt blocate.")
 
-# --- 2. MIXER MANUAL (La vedere) ---
+# --- 2. MIXER MANUAL ---
 st.divider()
-with st.expander("🎲 Mixerul Meu Manual (20 nr -> 5 var)"):
+with st.expander("🎲 Mixer Manual (20 nr -> 5 var)"):
     input_manual = st.text_input("Pune aici cele 20 de numere ale TALE:")
-    if st.button("🎰 Amestecă Numerele Mele"):
+    if st.button("🎰 Amestecă"):
         try:
             mele = [int(n) for n in input_manual.replace(",", " ").split() if n.strip().isdigit()]
             if len(mele) >= 4:
                 for i in range(5):
                     st.success(f"V{i+1}: {sorted(random.sample(mele, 4))}")
-            else: st.error("Pune măcar 4 numere!")
+            else: st.error("Minim 4 numere!")
         except: st.error("Eroare!")
 
-# --- 3. ANALIZA SI GENERARE ---
+# --- 3. ANALIZA ȘI ARHIVA (LA VEDERE) ---
 date_loto = incarca_date()
 if date_loto:
     st.divider()
-    tab1, tab2, tab3 = st.tabs(["🎰 MIX AUTO", "📊 STRATEGIE", "📜 ARHIVĂ"])
+    tab1, tab2, tab3 = st.tabs(["🎰 MIX AUTO", "📊 STRATEGIE", "📜 REZULTATE ARHIVĂ"])
     
     with tab1:
         if st.button("GENEREAZĂ DIN ISTORIC"):
@@ -92,12 +89,11 @@ if date_loto:
             for _ in range(3): st.code(sorted(random.sample(g_b, 4)))
 
     with tab3:
-        if este_admin:
-            st.subheader("📜 Istoric Extrageri")
-            for idx, ex in enumerate(date_loto):
-                st.text(f"{idx+1}. {ex}")
-        else:
-            st.error("⚠️ Arhiva este protejată. Introdu parola în meniul din stânga.")
+        st.subheader("📜 Istoric Extrageri (Doar Verificare)")
+        # Tabel curat pentru vizualizare
+        df = pd.DataFrame(date_loto)
+        df.index = [f"Extragerea {i+1}" for i in range(len(date_loto))]
+        st.dataframe(df, use_container_width=True)
 else:
     st.info("Baza de date e goală.")
 
