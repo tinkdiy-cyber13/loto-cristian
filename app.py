@@ -7,18 +7,17 @@ import os
 import time
 
 # Configurare Mobil
-st.set_page_config(page_title="Loto Pro v9.5", page_icon="📈", layout="centered")
+st.set_page_config(page_title="Loto Pro v9.6", page_icon="📈", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
 PAROLA_ADMIN = "admin123" 
 
-# --- FUNCTII BAZA DE DATE (REPARATE) ---
+# --- FUNCTII BAZA DE DATE ---
 def incarca_tot():
     if os.path.exists(DB_FILE):
         try:
             with open(DB_FILE, "r") as f:
                 date = json.load(f)
-                # Daca datele sunt in format vechi (doar o lista), le convertim
                 if isinstance(date, list):
                     return {"extrageri": date, "vizite": 0}
                 return date
@@ -33,17 +32,24 @@ def salveaza_tot(date_complete):
 # --- INITIALIZARE ---
 date_sistem = incarca_tot()
 
-# Contorizam doar la inceputul sesiunii
 if 'numarat' not in st.session_state:
-    vizite_actuale = date_sistem.get("vizite", 0) + 1
-    date_sistem["vizite"] = vizite_actuale
+    date_sistem["vizite"] = date_sistem.get("vizite", 0) + 1
     salveaza_tot(date_sistem)
     st.session_state['numarat'] = True
 
-st.title("🚀 Loto Cristian v9.5")
+st.title("🚀 Loto Cristian v9.6")
 
-# --- AFISARE CONTOR DISCRET ---
-st.markdown(f"<p style='text-align: right; color: gray; font-size: 12px;'>S: {date_sistem.get('vizite', 0)}</p>", unsafe_allow_html=True)
+# --- AFISARE CONTOR ACCENTUAT (Font 16, Bold, Albastru) ---
+st.markdown(
+    f"""
+    <div style='text-align: right; margin-top: -50px;'>
+        <span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 1px solid #22d3ee; padding: 5px 10px; border-radius: 10px;'>
+            ACCESĂRI: {date_sistem.get('vizite', 0)}
+        </span>
+    </div>
+    """, 
+    unsafe_allow_html=True
+)
 
 # --- ADMIN PANEL ---
 st.sidebar.subheader("🔐 Panou Control Admin")
@@ -63,7 +69,7 @@ if este_admin:
                         date_sistem["extrageri"].insert(0, numere)
                         salveaza_tot(date_sistem)
                         st.success("✅ Salvat!"); st.rerun()
-                except: st.error("Format numere greșit!")
+                except: st.error("Eroare format!")
         with col_b:
             if st.button("🗑️ Șterge Ultima"):
                 if date_sistem.get("extrageri"):
@@ -80,7 +86,7 @@ with st.expander("🎲 Mixer Manual"):
             mele = [int(n) for n in input_manual.replace(",", " ").split() if n.strip().isdigit()]
             if len(mele) >= 4:
                 for i in range(5): st.success(f"V{i+1}: {sorted(random.sample(mele, 4))}")
-        except: st.error("Eroare la procesare!")
+        except: st.error("Eroare!")
 
 # --- ANALIZA ȘI ARHIVA ---
 date_loto = date_sistem.get("extrageri", [])
@@ -109,5 +115,6 @@ if date_loto:
 st.divider()
 if st.button("🎁 SURPRIZĂ"):
     st.balloons()
-    st.info("Baftă maximă, Cristian! i5-ul tău e la butoane. 🚀")
+    st.info("Baftă maximă, Cristian! Ești la vizita numărul " + str(date_sistem.get('vizite', 0)) + "! 🚀")
+
 
