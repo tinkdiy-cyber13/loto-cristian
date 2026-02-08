@@ -7,22 +7,35 @@ import os
 import time
 
 # Configurare Mobil
-st.set_page_config(page_title="Loto Pro v9.3", page_icon="🎁", layout="centered")
+st.set_page_config(page_title="Loto Pro v9.4", page_icon="📈", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
 PAROLA_ADMIN = "admin123" 
 
-def incarca_date():
+# --- FUNCTII BAZA DE DATE ---
+def incarca_tot():
     if os.path.exists(DB_FILE):
         with open(DB_FILE, "r") as f:
             return json.load(f)
-    return []
+    return {"extrageri": [], "vizite": 0}
 
-def salveaza_date(date):
+def salveaza_tot(date_complete):
     with open(DB_FILE, "w") as f:
-        json.dump(date, f)
+        json.dump(date_complete, f)
 
-st.title("🚀 Loto Cristian v9.3")
+# --- INITIALIZARE SI CONTORIZARE ---
+date_sistem = incarca_tot()
+
+# Daca e o sesiune noua, crestem numarul de accesari
+if 'numarat' not in st.session_state:
+    date_sistem["vizite"] = date_sistem.get("vizite", 0) + 1
+    salveaza_tot(date_sistem)
+    st.session_state['numarat'] = True
+
+st.title("🚀 Loto Cristian v9.4")
+
+# --- AFISARE CONTOR (Mic si discret, sus in dreapta) ---
+st.markdown(f"<p style='text-align: right; color: gray; font-size: 12px;'>S: {date_sistem['vizite']}</p>", unsafe_allow_html=True)
 
 # --- ADMIN PANEL ---
 st.sidebar.subheader("🔐 Panou Control Admin")
@@ -37,14 +50,14 @@ if este_admin:
             if st.button("💾 Salvează"):
                 numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
                 if len(numere) == 20:
-                    date_curente = incarca_date()
-                    date_curente.insert(0, numere); salveaza_date(date_curente[:20])
+                    date_sistem["extrageri"].insert(0, numere)
+                    salveaza_tot(date_sistem)
                     st.success("✅ Salvat!"); st.rerun()
         with col_b:
             if st.button("🗑️ Șterge Ultima"):
-                date_curente = incarca_date()
-                if date_curente:
-                    date_curente.pop(0); salveaza_date(date_curente)
+                if date_sistem["extrageri"]:
+                    date_sistem["extrageri"].pop(0)
+                    salveaza_tot(date_sistem)
                     st.warning("Șters!"); st.rerun()
 
 # --- MIXER MANUAL ---
@@ -59,7 +72,7 @@ with st.expander("🎲 Mixer Manual"):
         except: st.error("Eroare!")
 
 # --- ANALIZA ȘI ARHIVA ---
-date_loto = incarca_date()
+date_loto = date_sistem["extrageri"]
 if date_loto:
     st.divider()
     tab1, tab2, tab3 = st.tabs(["🎰 MIX AUTO", "📊 STRATEGIE", "📜 REZULTATE"])
@@ -81,28 +94,12 @@ if date_loto:
     with tab3:
         st.dataframe(pd.DataFrame(date_loto), use_container_width=True)
 
-# --- 🎁 BUTONUL SURPRIZĂ (NOU!) ---
+# --- 🎁 BUTONUL SURPRIZĂ ---
 st.divider()
-st.write("### ✨ Ceva special?")
-if st.button("🎁 APASĂ PENTRU SURPRIZĂ"):
-    with st.spinner("Se încarcă norocul..."):
-        time.sleep(1.5)
-    st.balloons() # Efect de animație pe ecran
-    
-    mesaje = [
-        "Cristian, cu i5-ul ăsta și mintea ta, ești de neoprit! 🚀",
-        "Norocul și-l face omul cu mâna lui (și cu Python)! 🐍",
-        "Ești oficial cel mai tehnologizat jucător de loto! 🎰",
-        "Berea aia de care ziceai? Să fie una câștigătoare! 🍻",
-        "11 este pe drum, simt eu! 🎯",
-        "SUCCES TUTUROR !",
-        "MULT NOROC !",
-        "BAFTA !",
-        "O ZI NOROCOASA!",
-    ]
+if st.button("🎁 SURPRIZĂ"):
+    st.balloons()
+    mesaje = ["Cristian, ești de neoprit! 🚀", "11 este pe drum! 🎯", "Succes maxim, Admin! 🎰"]
     st.info(random.choice(mesaje))
-    st.snow() # Efect de zăpadă/particule
-
 
 
 
