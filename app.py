@@ -7,29 +7,24 @@ import os
 import time
 
 # Configurare Mobil
-st.set_page_config(page_title="Loto Pro v9.6", page_icon="📈", layout="centered")
+st.set_page_config(page_title="Loto Pro v9.8", page_icon="📈", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
-PAROLA_ADMIN = "admin13$clover$13" 
+PAROLA_ADMIN = "admin123" # Schimbă aici!
 
-# --- FUNCTII BAZA DE DATE ---
 def incarca_tot():
     if os.path.exists(DB_FILE):
         try:
             with open(DB_FILE, "r") as f:
                 date = json.load(f)
-                if isinstance(date, list):
-                    return {"extrageri": date, "vizite": 0}
+                if isinstance(date, list): return {"extrageri": date, "vizite": 0}
                 return date
-        except:
-            return {"extrageri": [], "vizite": 0}
+        except: return {"extrageri": [], "vizite": 0}
     return {"extrageri": [], "vizite": 0}
 
 def salveaza_tot(date_complete):
-    with open(DB_FILE, "w") as f:
-        json.dump(date_complete, f)
+    with open(DB_FILE, "w") as f: json.dump(date_complete, f)
 
-# --- INITIALIZARE ---
 date_sistem = incarca_tot()
 
 if 'numarat' not in st.session_state:
@@ -37,19 +32,10 @@ if 'numarat' not in st.session_state:
     salveaza_tot(date_sistem)
     st.session_state['numarat'] = True
 
-st.title("🚀 Loto Cristian v9.6")
+st.title("🚀 Loto Pro v9.8")
 
-# --- AFISARE CONTOR ACCENTUAT (Font 16, Bold, Albastru) ---
-st.markdown(
-    f"""
-    <div style='text-align: right; margin-top: -50px;'>
-        <span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 1px solid #22d3ee; padding: 5px 10px; border-radius: 10px;'>
-            OO: {date_sistem.get('vizite', 0)}
-        </span>
-    </div>
-    """, 
-    unsafe_allow_html=True
-)
+# --- AFISARE SIMBOL "OO" ---
+st.markdown(f"<div style='text-align: right; margin-top: -55px;'><span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 2px solid #22d3ee; padding: 4px 12px; border-radius: 15px; background-color: rgba(34, 211, 238, 0.1);'>OO: {date_sistem.get('vizite', 0)}</span></div>", unsafe_allow_html=True)
 
 # --- ADMIN PANEL ---
 st.sidebar.subheader("🔐 Panou Control Admin")
@@ -67,14 +53,12 @@ if este_admin:
                     if len(numere) == 20:
                         if "extrageri" not in date_sistem: date_sistem["extrageri"] = []
                         date_sistem["extrageri"].insert(0, numere)
-                        salveaza_tot(date_sistem)
-                        st.success("✅ Salvat!"); st.rerun()
+                        salveaza_tot(date_sistem); st.success("✅ Salvat!"); st.rerun()
                 except: st.error("Eroare format!")
         with col_b:
             if st.button("🗑️ Șterge Ultima"):
                 if date_sistem.get("extrageri"):
-                    date_sistem["extrageri"].pop(0)
-                    salveaza_tot(date_sistem)
+                    date_sistem["extrageri"].pop(0); salveaza_tot(date_sistem)
                     st.warning("Șters!"); st.rerun()
 
 # --- MIXER MANUAL ---
@@ -93,12 +77,10 @@ date_loto = date_sistem.get("extrageri", [])
 if date_loto:
     st.divider()
     tab1, tab2, tab3 = st.tabs(["🎰 MIX AUTO", "📊 STRATEGIE", "📜 REZULTATE"])
-    
     with tab1:
         if st.button("GENEREAZĂ DIN ISTORIC"):
             toate_aparute = list(set([n for sub in date_loto for n in sub]))
             for i in range(5): st.info(sorted(random.sample(toate_aparute, 4)))
-
     with tab2:
         if st.button("CALCULEAZĂ"):
             toate = [n for sub in date_loto for n in sub]
@@ -107,15 +89,29 @@ if date_loto:
             g_b = list(set(fierbinti + [n for n, f in numaratoare.items() if f == 2]))
             st.write("🔥 **TOP FIERBINȚI:**", sorted(fierbinti[:5]))
             for _ in range(3): st.code(sorted(random.sample(g_b, 4)))
+    with tab3: st.dataframe(pd.DataFrame(date_loto), use_container_width=True)
 
-    with tab3:
-        st.dataframe(pd.DataFrame(date_loto), use_container_width=True)
-
-# --- 🎁 BUTONUL SURPRIZĂ ---
+# --- 🎁 BUTONUL SURPRIZĂ (v9.8 FUNNY EDITION) ---
 st.divider()
 if st.button("🎁 SURPRIZĂ"):
     st.balloons()
-    st.info("Mult NOROC! " + str(date_sistem.get('vizite', 0)) + "! 🚀")
+    
+    mesaje_funny = [
+        "Sistemul zice că ești la un bilet distanță de a-ți lua un i9! 💻",
+        "Dacă iese 11 diseară, dăm liber la bere! 🍻",
+        "Algoritmul a calculat: Norocul tău e mai mare decât baza de date! 📈",
+        "Atenție! Excesul de numere norocoase poate provoca zâmbete! 😁",
+        "Nu eu aleg numerele, ele te aleg pe tine! ✨",
+        "Baza de date e plină, dar portofelul mai are loc! 💰",
+        "Ești oficial Admin-ul propriului noroc. Folosește-l cu cap! 🎩",
+        "În caz de câștig, nu uita de procesorul i5 care a muncit aici! 🤖",
+        "Statistica zice că cine nu joacă, nu câștigă. Cine joacă cu Python, sperie urna! 🐍",
+        "Codul e gata, berea e rece, norocul e pe drum! 🚀"
+    ]
+    
+    st.info(random.choice(mesaje_funny))
+    st.snow()
+
 
 
 
