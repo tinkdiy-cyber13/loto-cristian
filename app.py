@@ -59,10 +59,13 @@ if este_admin:
         col_a, col_b = st.columns(2)
         with col_a:
             if st.button("💾 Salvează"):
-                numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
-                if len(numere) == 20:
-                    date_sistem["extrageri"].insert(0, numere)
-                    salveaza_tot(date_sistem); st.success("✅ Salvat!"); st.rerun()
+                try:
+                    numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
+                    if len(numere) == 20:
+                        if "extrageri" not in date_sistem: date_sistem["extrageri"] = []
+                        date_sistem["extrageri"].insert(0, numere)
+                        salveaza_tot(date_sistem); st.success("✅ Salvat!"); st.rerun()
+                except: st.error("Eroare format!")
         with col_b:
             if st.button("🗑️ Șterge Ultima"):
                 if date_sistem.get("extrageri"):
@@ -74,15 +77,12 @@ with st.expander("📩 Trimite un mesaj Admin-ului"):
     msg_text = st.text_area("Scrie aici mesajul tău (anonim):", height=100)
     if st.button("🚀 Trimite Mesajul"):
         if msg_text.strip():
-            nou_msg = {
-                "data": time.strftime("%d-%m %H:%M"),
-                "text": msg_text
-            }
+            nou_msg = {"data": time.strftime("%d-%m %H:%M"), "text": msg_text}
             date_sistem["mesaje"].append(nou_msg)
             salveaza_tot(date_sistem)
             st.success("✅ Mesajul a fost trimis către Admin!")
             time.sleep(1); st.rerun()
-        else: st.error("Scrie ceva înainte de a trimite!")
+        else: st.error("Scrie ceva!")
 
 # --- MIXER MANUAL ---
 st.divider()
@@ -93,6 +93,7 @@ with st.expander("🎲 Mixer Manual"):
             mele = [int(n) for n in input_manual.replace(",", " ").split() if n.strip().isdigit()]
             if len(mele) >= 4:
                 for i in range(5): st.success(f"V{i+1}: {sorted(random.sample(mele, 4))}")
+            else: st.error("Minim 4 numere!")
         except: st.error("Eroare!")
 
 # --- ANALIZA ȘI ARHIVA ---
@@ -117,8 +118,10 @@ if date_loto:
 # --- 🎁 BUTONUL SURPRIZĂ ---
 st.divider()
 if st.button("🎁 SURPRIZĂ"):
-    st.balloons(); st.snow()
-        mesaje_funny = ["Sistemul zice că ești la un bilet distanță de a-ți lua un i9! 💻",
+    st.balloons()
+    st.snow()
+    mesaje_funny = [
+        "Sistemul zice că ești la un bilet distanță de a-ți lua un i9! 💻",
         "Dacă iese 11 diseară, dăm liber la bere! 🍻",
         "Algoritmul a calculat: Norocul tău e mai mare decât baza de date! 📈",
         "Atenție! Excesul de numere norocoase poate provoca zâmbete! 😁",
@@ -127,9 +130,10 @@ if st.button("🎁 SURPRIZĂ"):
         "Ești oficial Admin-ul propriului noroc. Folosește-l cu cap! 🎩",
         "În caz de câștig, nu uita de procesorul i5 care a muncit aici! 🤖",
         "Statistica zice că cine nu joacă, nu câștigă. Cine joacă cu Python, sperie urna! 🐍",
-        "Codul e gata, berea e rece, norocul e pe drum! 🚀"]
-    st.info(random.choice(mesaje_funny))    
-    st.snow()
+        "Codul e gata, berea e rece, norocul e pe drum! 🚀"
+    ]
+    st.info(random.choice(mesaje_funny))
+
 
 
 
