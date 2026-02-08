@@ -44,7 +44,7 @@ st.markdown(
     f"""
     <div style='text-align: right; margin-top: -50px;'>
         <span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 1px solid #22d3ee; padding: 5px 10px; border-radius: 10px;'>
-            ACCESĂRI: {date_sistem.get('vizite', 0)}
+            OO: {date_sistem.get('vizite', 0)}
         </span>
     </div>
     """, 
@@ -116,5 +116,6 @@ st.divider()
 if st.button("🎁 SURPRIZĂ"):
     st.balloons()
     st.info("Baftă maximă, Cristian! Ești la vizita numărul " + str(date_sistem.get('vizite', 0)) + "! 🚀")
+
 
 
