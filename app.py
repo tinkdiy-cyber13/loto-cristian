@@ -10,7 +10,7 @@ import time
 st.set_page_config(page_title="Loto Pro v9.8", page_icon="📈", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
-PAROLA_ADMIN = "admin123" # Schimbă aici!
+PAROLA_ADMIN = "admin13$clover$13" # Schimbă aici!
 
 def incarca_tot():
     if os.path.exists(DB_FILE):
@@ -111,6 +111,7 @@ if st.button("🎁 SURPRIZĂ"):
     
     st.info(random.choice(mesaje_funny))
     st.snow()
+
 
 
 
