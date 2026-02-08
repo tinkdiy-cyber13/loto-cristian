@@ -10,7 +10,7 @@ import time
 st.set_page_config(page_title="Loto Pro v9.6", page_icon="📈", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
-PAROLA_ADMIN = "13$clover$13admin" 
+PAROLA_ADMIN = "admin123" 
 
 # --- FUNCTII BAZA DE DATE ---
 def incarca_tot():
@@ -116,6 +116,7 @@ st.divider()
 if st.button("🎁 SURPRIZĂ"):
     st.balloons()
     st.info("Baftă maximă, Cristian! Ești la vizita numărul " + str(date_sistem.get('vizite', 0)) + "! 🚀")
+
 
 
 
