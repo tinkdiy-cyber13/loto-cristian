@@ -73,7 +73,7 @@ if este_admin:
 
 # --- 📩 CASUTA DE MESAJE (PENTRU UTILIZATORI) ---
 st.divider()
-with st.expander("📩 Trimite un mesaj Admin-ului"):
+with st.expander("📩 Trimite un mesaj "):
     msg_text = st.text_area("Scrie aici mesajul tău (anonim):", height=100)
     if st.button("🚀 Trimite Mesajul"):
         if msg_text.strip():
@@ -133,6 +133,7 @@ if st.button("🎁 SURPRIZĂ"):
         "Codul e gata, berea e rece, norocul e pe drum! 🚀"
     ]
     st.info(random.choice(mesaje_funny))
+
 
 
 
