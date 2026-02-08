@@ -118,8 +118,7 @@ if date_loto:
 st.divider()
 if st.button("🎁 SURPRIZĂ"):
     st.balloons(); st.snow()
-        mesaje_funny = [
-        "Sistemul zice că ești la un bilet distanță de a-ți lua un i9! 💻",
+        mesaje_funny = ["Sistemul zice că ești la un bilet distanță de a-ți lua un i9! 💻",
         "Dacă iese 11 diseară, dăm liber la bere! 🍻",
         "Algoritmul a calculat: Norocul tău e mai mare decât baza de date! 📈",
         "Atenție! Excesul de numere norocoase poate provoca zâmbete! 😁",
@@ -128,11 +127,11 @@ if st.button("🎁 SURPRIZĂ"):
         "Ești oficial Admin-ul propriului noroc. Folosește-l cu cap! 🎩",
         "În caz de câștig, nu uita de procesorul i5 care a muncit aici! 🤖",
         "Statistica zice că cine nu joacă, nu câștigă. Cine joacă cu Python, sperie urna! 🐍",
-        "Codul e gata, berea e rece, norocul e pe drum! 🚀"
-    ]
+        "Codul e gata, berea e rece, norocul e pe drum! 🚀"]
     
     st.info(random.choice(mesaje_funny))
     st.snow()
+
 
 
 
