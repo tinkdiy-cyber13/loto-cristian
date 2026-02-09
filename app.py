@@ -32,7 +32,7 @@ if 'numarat' not in st.session_state:
     salveaza_tot(date_sistem)
     st.session_state['numarat'] = True
 
-st.title("🚀 Loto 20/80 v10.3")
+st.title("🍀 Loto 20/80 v10.3")
 
 # --- AFISARE SIMBOL "OO" ---
 st.markdown(f"<div style='text-align: right; margin-top: -55px;'><span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 2px solid #22d3ee; padding: 4px 12px; border-radius: 15px; background-color: rgba(34, 211, 238, 0.1);'>OO: {date_sistem.get('vizite', 0)}</span></div>", unsafe_allow_html=True)
@@ -134,12 +134,26 @@ with col_m1:
 with col_m2:
     if st.button("🎁 SURPRIZĂ"):
         st.snow()
-        st.info("Mult Noroc! 🚀")
+        st.balloons()
+        mesaje_funny = [
+            "Sistemul zice că ești la un bilet distanță de a-ți lua un i9! 💻",
+            "Dacă iese 11 diseară, dăm liber la bere! 🍻",
+            "Algoritmul a calculat: Norocul tău e mai mare decât baza de date! 📈",
+            "Atenție! Excesul de numere norocoase poate provoca zâmbete! 😁",
+            "Nu eu aleg numerele, ele te aleg pe tine! ✨",
+            "Baza de date e plină, dar portofelul mai are loc! 💰",
+            "Ești oficial Admin-ul propriului noroc. Folosește-l cu cap! 🎩",
+            "În caz de câștig, nu uita de procesorul i5 care a muncit aici! 🤖",
+            "Statistica zice că cine nu joacă, nu câștigă. Cine joacă cu Python, sperie urna! 🐍",
+            "Codul e gata, berea e rece, norocul e pe drum! 🚀"
+        ]
+        st.info(random.choice(mesaje_funny))
 
 if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem.get("mesaje", [])):
         st.info(f"{m['data']}: {m['text']}")
+
 
 
 
