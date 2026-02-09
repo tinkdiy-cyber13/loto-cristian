@@ -7,7 +7,7 @@ import os
 import time
 
 # Configurare Mobil
-st.set_page_config(page_title="Loto Pro v10.3", page_icon="🎰", layout="centered")
+st.set_page_config(page_title="Loto 20/80 v10.3", page_icon="🎰", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
 PAROLA_ADMIN = "admin13$clover$13" 
@@ -134,12 +134,13 @@ with col_m1:
 with col_m2:
     if st.button("🎁 SURPRIZĂ"):
         st.snow()
-        st.info("Baftă maximă, Cristian! 🚀")
+        st.info("Mult Noroc! 🚀")
 
 if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem.get("mesaje", [])):
         st.info(f"{m['data']}: {m['text']}")
+
 
 
 
