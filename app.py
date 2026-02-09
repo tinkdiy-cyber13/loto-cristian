@@ -136,15 +136,15 @@ with col_m2:
         st.snow()
         st.balloons()
         mesaje_funny = [
-            "Sistemul zice că ești la un bilet distanță de a-ți lua un i9! 💻",
+            "Sistemul zice că ești la un bilet distanță de căstig ! 💻",
             "Dacă iese 11 diseară, dăm liber la bere! 🍻",
             "Algoritmul a calculat: Norocul tău e mai mare decât baza de date! 📈",
             "Atenție! Excesul de numere norocoase poate provoca zâmbete! 😁",
             "Nu eu aleg numerele, ele te aleg pe tine! ✨",
             "Baza de date e plină, dar portofelul mai are loc! 💰",
-            "Ești oficial Admin-ul propriului noroc. Folosește-l cu cap! 🎩",
-            "În caz de câștig, nu uita de procesorul i5 care a muncit aici! 🤖",
-            "Statistica zice că cine nu joacă, nu câștigă. Cine joacă cu Python, sperie urna! 🐍",
+            "Folosește-l cu cap! 🎩",
+            "În caz de câștig,joaca incontinuare 🤖",
+            "Statistica zice că cine nu joacă, nu câștigă.🐍",
             "Codul e gata, berea e rece, norocul e pe drum! 🚀"
         ]
         st.info(random.choice(mesaje_funny))
@@ -153,6 +153,7 @@ if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem.get("mesaje", [])):
         st.info(f"{m['data']}: {m['text']}")
+
 
 
 
