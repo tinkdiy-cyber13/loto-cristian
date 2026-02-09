@@ -10,7 +10,7 @@ import time
 st.set_page_config(page_title="Loto 20/80 v10.3", page_icon="🎰", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
-PAROLA_ADMIN = "admin13$clover$13" 
+PAROLA_ADMIN = "admin13$888$13" 
 
 def incarca_tot():
     if os.path.exists(DB_FILE):
@@ -153,6 +153,7 @@ if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem.get("mesaje", [])):
         st.info(f"{m['data']}: {m['text']}")
+
 
 
 
