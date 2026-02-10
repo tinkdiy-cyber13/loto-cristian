@@ -145,7 +145,7 @@ with col_m2:
             "Folosește-l cu cap! 🎩",
             "În caz de câștig,joaca incontinuare 🤖",
             "Statistica zice că cine nu joacă, nu câștigă.🐍",
-            "Codul e gata, berea e rece, norocul e pe drum! 🚀"
+            "Berea e rece, norocul e pe drum! 🚀"
         ]
         st.info(random.choice(mesaje_funny))
 
@@ -153,6 +153,7 @@ if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem.get("mesaje", [])):
         st.info(f"{m['data']}: {m['text']}")
+
 
 
 
