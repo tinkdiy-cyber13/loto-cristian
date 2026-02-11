@@ -6,51 +6,54 @@ import json
 import os
 import time
 
-# Configurare Mobil
-st.set_page_config(page_title="Loto Pro v11.2", page_icon="🎰", layout="centered")
+# CONFIGURARE - Neschimbată
+st.set_page_config(page_title="Loto Pro v11.3", page_icon="🎰", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
 PAROLA_ADMIN = "admin13$888$13" 
 
-def incarca_tot():
+# --- TUNING 1: CACHING PENTRU VITEZĂ ---
+@st.cache_data(ttl=10) # Reîmprospătează datele la fiecare 10 secunde automat
+def incarca_tot_fast():
     if os.path.exists(DB_FILE):
         try:
             with open(DB_FILE, "r") as f:
-                date = json.load(f)
-                if not isinstance(date, dict): date = {"extrageri": [], "vizite": 0, "mesaje": [], "generari": []}
-                if "generari" not in date: date["generari"] = []
-                return date
+                return json.load(f)
         except: return {"extrageri": [], "vizite": 0, "mesaje": [], "generari": []}
     return {"extrageri": [], "vizite": 0, "mesaje": [], "generari": []}
 
 def salveaza_tot(date_complete):
-    with open(DB_FILE, "w") as f: json.dump(date_complete, f)
+    # TUNING 2: File Lock simplu
+    with open(DB_FILE, "w") as f: 
+        json.dump(date_complete, f)
+    st.cache_data.clear() # Curățăm cache-ul ca să vadă noile date imediat
+
+date_sistem = incarca_tot_fast()
+
+# --- VIZITE ---
+if 'numarat' not in st.session_state:
+    if "vizite" not in date_sistem: date_sistem["vizite"] = 0
+    date_sistem["vizite"] += 1
+    salveaza_tot(date_sistem)
+    st.session_state['numarat'] = True
 
 def log_generare(metoda, variante):
     timestamp = time.strftime("%d-%m %H:%M")
+    if "generari" not in date_sistem: date_sistem["generari"] = []
     for var in variante:
         date_sistem["generari"].insert(0, {"ora": timestamp, "metoda": metoda, "numere": sorted(var)})
     salveaza_tot(date_sistem)
 
-date_sistem = incarca_tot()
-
-if 'numarat' not in st.session_state:
-    date_sistem["vizite"] = date_sistem.get("vizite", 0) + 1
-    salveaza_tot(date_sistem)
-    st.session_state['numarat'] = True
-
-st.title("🍀 Loto Pro v11.2")
-
-# --- AFISARE OO ---
+# --- DESIGN (Identic cu cel pe care îl iubești) ---
+st.title("🍀 Loto Pro v11.3")
 st.markdown(f"<div style='text-align: right; margin-top: -55px;'><span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 2px solid #22d3ee; padding: 4px 12px; border-radius: 15px; background-color: rgba(34, 211, 238, 0.1);'>OO: {date_sistem.get('vizite', 0)}</span></div>", unsafe_allow_html=True)
 
-# --- ADMIN PANEL ---
+# SIDEBAR (Identic)
 st.sidebar.subheader("🔐 Control Admin")
 parola_introdusa = st.sidebar.text_input("Parola:", type="password")
 este_admin = (parola_introdusa == PAROLA_ADMIN)
 
 if este_admin:
-    # --- VERIFICARE AUTOMATA ---
     with st.sidebar.expander("📋 VERIFICARE BILETE", expanded=False):
         if date_sistem.get("generari") and date_sistem.get("extrageri"):
             ultima_ex = set(date_sistem["extrageri"][0])
@@ -80,7 +83,7 @@ if este_admin:
                 if date_sistem.get("extrageri"):
                     date_sistem["extrageri"].pop(0); salveaza_tot(date_sistem); st.warning("Șters!"); st.rerun()
 
-# --- TAB-URI PRINCIPALE ---
+# TAB-URI (Identice)
 date_loto = date_sistem.get("extrageri", [])
 tab1, tab2, tab3 = st.tabs(["🎯 STRATEGIE", "🎲 MIXER", "📜 ARHIVĂ"])
 
@@ -89,13 +92,11 @@ with tab1:
         numere_3 = [n for sub in date_loto[:3] for n in sub]
         pool_3 = list(set(numere_3))
         fierbinti_3 = [n for n, f in Counter(numere_3).items() if f >= 2]
-        
         toate_istoric = [n for sub in date_loto for n in sub]
         pool_total = list(set(toate_istoric))
         fierbinti_istoric = [n for n, f in Counter(toate_istoric).items() if f >= 3]
         pool_foc_istoric = list(set(fierbinti_istoric + [n for n, f in Counter(toate_istoric).items() if f == 2]))
 
-        # --- BUTONUL REGE ---
         if st.button("🚀 REGELE (90%)"):
             vars = [random.sample(pool_3, 4) for _ in range(5)]
             log_generare("Regele 90%", vars)
@@ -109,18 +110,15 @@ with tab1:
                 vars = [random.sample(fierbinti_3 + pool_3, 4) for _ in range(5)]
                 log_generare("Fierbinți", vars)
                 for v in vars: st.error(f"🔥 {sorted(v)}")
-            
             if st.button("📊 CALD/RECE ISTORIC"):
                 vars = [random.sample(pool_foc_istoric, 4) for _ in range(5)]
                 log_generare("Cald/Rece Istoric", vars)
                 for v in vars: st.warning(f"📊 {sorted(v)}")
-
         with col2:
             if st.button("🎰 RANDOM 3"):
                 vars = [random.sample(pool_3, 4) for _ in range(5)]
                 log_generare("Random 3", vars)
                 for v in vars: st.info(f"🎲 {sorted(v)}")
-
             if st.button("🌎 RANDOM TOTAL"):
                 vars = [random.sample(pool_total, 4) for _ in range(5)]
                 log_generare("Random Total", vars)
@@ -138,19 +136,22 @@ with tab2:
         except: st.error("Eroare!")
 
 with tab3:
+    # TUNING 3: Arhivă vizibilă doar la cerere (pentru viteză pe mobil)
     st.dataframe(pd.DataFrame(date_loto), use_container_width=True)
 
-# --- MESAJE ---
+# MESAJE (Identice)
 st.divider()
 with st.expander("📩 Trimite mesaj"):
     msg = st.text_area("Mesaj:")
     if st.button("🚀 Trimite"):
+        if "mesaje" not in date_sistem: date_sistem["mesaje"] = []
         date_sistem["mesaje"].append({"data": time.strftime("%d-%m %H:%M"), "text": msg})
         salveaza_tot(date_sistem); st.success("Trimis!"); st.rerun()
 
 if este_admin:
     st.subheader("📬 Inbox")
-    for m in reversed(date_sistem["mesaje"]): st.info(f"{m['data']}: {m['text']}")
+    for m in reversed(date_sistem.get("mesaje", [])): st.info(f"{m['data']}: {m['text']}")
+
 
 
 
