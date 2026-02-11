@@ -5,6 +5,7 @@ import random
 import json
 import os
 import time
+from datetime import datetime, timedelta
 
 # CONFIGURARE - Neschimbată
 st.set_page_config(page_title="Loto Pro v11.3", page_icon="🎰", layout="centered")
@@ -28,7 +29,13 @@ def salveaza_tot(date_complete):
         json.dump(date_complete, f)
     st.cache_data.clear() # Curățăm cache-ul ca să vadă noile date imediat
 
-date_sistem = incarca_tot_fast()
+if st.button("🚀 Trimite"):
+    ora_ro = datetime.utcnow() + timedelta(hours=2)
+    timestamp = ora_ro.strftime("%d-%m %H:%M")
+    date_sistem["mesaje"].append({"data": timestamp, "text": msg})
+    salveaza_tot(date_sistem)
+    st.success("Trimis!")
+    st.rerun()
 
 # --- VIZITE ---
 if 'numarat' not in st.session_state:
@@ -38,7 +45,10 @@ if 'numarat' not in st.session_state:
     st.session_state['numarat'] = True
 
 def log_generare(metoda, variante):
-    timestamp = time.strftime("%d-%m %H:%M")
+    # Calculăm ora României (UTC + 2 ore)
+    ora_ro = datetime.utcnow() + timedelta(hours=2) 
+    timestamp = ora_ro.strftime("%d-%m %H:%M")
+
     if "generari" not in date_sistem: date_sistem["generari"] = []
     for var in variante:
         date_sistem["generari"].insert(0, {"ora": timestamp, "metoda": metoda, "numere": sorted(var)})
@@ -151,6 +161,7 @@ with st.expander("📩 Trimite mesaj"):
 if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem.get("mesaje", [])): st.info(f"{m['data']}: {m['text']}")
+
 
 
 
