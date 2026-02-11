@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 st.set_page_config(page_title="Loto Pro v11.6", page_icon="🎰", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
-PAROLA_ADMIN = "admin13$888$13" 
+PAROLA_ADMIN = "admin13$777$13" 
 
 # Funcție pentru Ora României (UTC + 2)
 def get_ora_ro():
@@ -170,6 +170,7 @@ with st.expander("📩 Trimite mesaj"):
 if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem.get("mesaje", [])): st.info(f"{m['data']}: {m['text']}")
+
 
 
 
