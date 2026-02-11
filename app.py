@@ -5,10 +5,10 @@ import random
 import json
 import os
 import time
-from datetime import datetime, timedelta # Piesa pentru ora RO
+from datetime import datetime, timedelta
 
 # CONFIGURARE
-st.set_page_config(page_title="Loto Pro v11.4", page_icon="🎰", layout="centered")
+st.set_page_config(page_title="Loto Pro v11.5", page_icon="🎰", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
 PAROLA_ADMIN = "admin13$888$13" 
@@ -23,7 +23,6 @@ def incarca_tot_fast():
         try:
             with open(DB_FILE, "r") as f:
                 date = json.load(f)
-                # FIX EROARE: Ne asigurăm că date_sistem este un dicționar (dict)
                 if not isinstance(date, dict): 
                     return {"extrageri": [], "vizite": 0, "mesaje": [], "generari": []}
                 return date
@@ -37,7 +36,7 @@ def salveaza_tot(date_complete):
 
 date_sistem = incarca_tot_fast()
 
-# --- VIZITE (Cu fix-ul de eroare) ---
+# --- VIZITE ---
 if 'numarat' not in st.session_state:
     if not isinstance(date_sistem, dict): date_sistem = {"vizite": 0}
     date_sistem["vizite"] = date_sistem.get("vizite", 0) + 1
@@ -45,14 +44,14 @@ if 'numarat' not in st.session_state:
     st.session_state['numarat'] = True
 
 def log_generare(metoda, variante):
-    timestamp = get_ora_ro() # Aici e ora RO
+    timestamp = get_ora_ro()
     if "generari" not in date_sistem: date_sistem["generari"] = []
     for var in variante:
         date_sistem["generari"].insert(0, {"ora": timestamp, "metoda": metoda, "numere": sorted(var)})
     salveaza_tot(date_sistem)
 
 # --- DESIGN ---
-st.title("🍀 Loto Pro v11.4")
+st.title("🍀 Loto Pro v11.5")
 st.markdown(f"<div style='text-align: right; margin-top: -55px;'><span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 2px solid #22d3ee; padding: 4px 12px; border-radius: 15px; background-color: rgba(34, 211, 238, 0.1);'>OO: {date_sistem.get('vizite', 0)}</span></div>", unsafe_allow_html=True)
 
 # SIDEBAR ADMIN
@@ -63,7 +62,7 @@ este_admin = (parola_introdusa == PAROLA_ADMIN)
 if este_admin:
     with st.sidebar.expander("📋 VERIFICARE BILETE"):
         if date_sistem.get("generari") and date_sistem.get("extrageri"):
-            ultima_ex = set(date_sistem["extrageri"][0])
+            ultima_ex = set(date_sistem["extrageri"][0]) # Verificăm cu ultima listă de 20
             for g in date_sistem["generari"]:
                 nimerite = set(g["numere"]) & ultima_ex
                 count = len(nimerite)
@@ -99,11 +98,16 @@ with tab1:
         pool_3 = list(set(numere_3))
         fierbinti_3 = [n for n, f in Counter(numere_3).items() if f >= 2]
         
+        toate_ist = [n for sub in date_loto for n in sub]
+        pool_tot = list(set(toate_ist))
+        numaratoare = Counter(toate_ist)
+        fierbinti_ist = [n for n, f in numaratoare.items() if f >= 3]
+        pool_foc_ist = list(set(fierbinti_ist + [n for n, f in numaratoare.items() if f == 2]))
+
         if st.button("🚀 REGELE (90%)"):
             vars = [random.sample(pool_3, 4) for _ in range(5)]
-            log_generare("Regele 90%", vars)
+            log_generare("Regele 90%", vars); st.balloons()
             for v in vars: st.success(f"🍀 {sorted(v)}")
-            st.balloons()
         
         st.divider()
         col1, col2 = st.columns(2)
@@ -112,11 +116,21 @@ with tab1:
                 vars = [random.sample(fierbinti_3 + pool_3, 4) for _ in range(5)]
                 log_generare("Fierbinți", vars)
                 for v in vars: st.error(f"🔥 {sorted(v)}")
+            
+            if st.button("📊 CALD/RECE ISTORIC"):
+                vars = [random.sample(pool_foc_ist, 4) for _ in range(5)]
+                log_generare("Cald/Rece Istoric", vars)
+                for v in vars: st.warning(f"📊 {sorted(v)}")
         with col2:
             if st.button("🎰 RANDOM 3"):
                 vars = [random.sample(pool_3, 4) for _ in range(5)]
                 log_generare("Random 3", vars)
                 for v in vars: st.info(f"🎲 {sorted(v)}")
+
+            if st.button("🌎 RANDOM TOTAL"):
+                vars = [random.sample(pool_tot, 4) for _ in range(5)]
+                log_generare("Random Total", vars)
+                for v in vars: st.info(f"🌎 {sorted(v)}")
     else:
         st.warning("Introdu minim 3 extrageri!")
 
@@ -132,7 +146,7 @@ with tab2:
 with tab3:
     st.dataframe(pd.DataFrame(date_sistem.get("extrageri", [])), use_container_width=True)
 
-# MESAJE (Ora RO)
+# MESAJE
 st.divider()
 with st.expander("📩 Trimite mesaj"):
     msg = st.text_area("Mesaj:")
@@ -144,8 +158,6 @@ with st.expander("📩 Trimite mesaj"):
 if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem.get("mesaje", [])): st.info(f"{m['data']}: {m['text']}")
-
-
 
 
 
