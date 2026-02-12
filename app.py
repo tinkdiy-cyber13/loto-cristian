@@ -125,22 +125,22 @@ with tab1:
         col1, col2 = st.columns(2)
         with col1:
             if st.button("🔥 MIX FIERBINȚI"):
-                vars = [random.sample(fierbinti_3 + pool_3, 4) for _ in range(4)]
+                vars = [random.sample(fierbinti_3 + pool_3, 4) for _ in range(33)]
                 log_generare("Fierbinți", vars)
                 for v in vars: st.error(f"🔥 {sorted(v)}")
             
             if st.button("📊 CALD/RECE ISTORIC"):
-                vars = [random.sample(pool_foc_ist, 4) for _ in range(5)]
+                vars = [random.sample(pool_foc_ist, 4) for _ in range(33)]
                 log_generare("Cald/Rece Istoric", vars)
                 for v in vars: st.warning(f"📊 {sorted(v)}")
         with col2:
             if st.button("🎰 RANDOM 3"):
-                vars = [random.sample(pool_3, 4) for _ in range(5)]
+                vars = [random.sample(pool_3, 4) for _ in range(33)]
                 log_generare("Random 3", vars)
                 for v in vars: st.info(f"🎲 {sorted(v)}")
 
             if st.button("🌎 RANDOM TOTAL"):
-                vars = [random.sample(pool_tot, 4) for _ in range(5)]
+                vars = [random.sample(pool_tot, 4) for _ in range(33)]
                 log_generare("Random Total", vars)
                 for v in vars: st.info(f"🌎 {sorted(v)}")
     else:
@@ -152,7 +152,7 @@ with tab2:
         try:
             mele = [int(n) for n in input_m.split()]
             if len(mele) >= 4:
-                for i in range(5): st.success(f"V{i+1}: {sorted(random.sample(mele, 4))}")
+                for i in range(10): st.success(f"V{i+1}: {sorted(random.sample(mele, 4))}")
         except: st.error("Eroare!")
 
 with tab3:
@@ -170,6 +170,7 @@ with st.expander("📩 Trimite mesaj"):
 if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem.get("mesaje", [])): st.info(f"{m['data']}: {m['text']}")
+
 
 
 
