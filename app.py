@@ -147,7 +147,7 @@ with tab1:
         st.warning("Introdu minim 3 extrageri!")
 
 with tab2:
-    input_m = st.text_input("Cele 20 de numere ale tale:")
+    input_m = st.text_input("Cele 50 de numere ale tale:")
     if st.button("🎰 Mix Manual"):
         try:
             mele = [int(n) for n in input_m.split()]
@@ -170,6 +170,7 @@ with st.expander("📩 Trimite mesaj"):
 if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem.get("mesaje", [])): st.info(f"{m['data']}: {m['text']}")
+
 
 
 
