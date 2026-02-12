@@ -8,7 +8,7 @@ import time
 from datetime import datetime, timedelta
 
 # CONFIGURARE
-st.set_page_config(page_title="Loto 20/80 v11.8.2", page_icon="🎰", layout="centered")
+st.set_page_config(page_title="Loto 20/80 v11.8.5", page_icon="🎰", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
 PAROLA_ADMIN = "admin13$999$13" 
@@ -33,6 +33,13 @@ def salveaza_tot(date_complete):
 
 date_sistem = incarca_tot_fast()
 
+# --- REPARARE CONTOR OO (Aici era lipsa) ---
+if 'numarat' not in st.session_state:
+    if "vizite" not in date_sistem: date_sistem["vizite"] = 0
+    date_sistem["vizite"] += 1
+    salveaza_tot(date_sistem)
+    st.session_state['numarat'] = True
+
 def log_generare(metoda, variante):
     timestamp = get_ora_ro()
     if "generari" not in date_sistem: date_sistem["generari"] = []
@@ -40,7 +47,7 @@ def log_generare(metoda, variante):
         date_sistem["generari"].insert(0, {"ora": timestamp, "metoda": metoda, "numere": sorted(var)})
     salveaza_tot(date_sistem)
 
-# --- CSS PENTRU BUTOANE RESTRÂNSE (Mici și compacte) ---
+# --- CSS BUTOANE RESTRÂNSE ---
 st.markdown("""
     <style>
     div.stButton > button {
@@ -50,15 +57,11 @@ st.markdown("""
         font-size: 14px !important;
         font-weight: bold !important;
     }
-    #btn_649_verde {
-        color: #28a745 !important;
-        border: 2px solid #28a745 !important;
-    }
     </style>
     """, unsafe_allow_html=True)
 
 # --- TITLU ȘI OO ---
-st.title("🍀 Loto 20/80 v11.8.2")
+st.title("🍀 Loto 20/80 v11.8.5")
 st.markdown(f"<div style='text-align: right; margin-top: -55px;'><span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 2px solid #22d3ee; padding: 4px 12px; border-radius: 15px; background-color: rgba(34, 211, 238, 0.1);'>OO: {date_sistem.get('vizite', 0)}</span></div>", unsafe_allow_html=True)
 
 # --- ADMIN PANEL ---
@@ -69,12 +72,9 @@ este_admin = (parola_introdusa == PAROLA_ADMIN)
 if este_admin:
     with st.sidebar.expander("📋 ISTORIC"):
         if date_sistem.get("generari"):
-            # REPARARE: Convertim listele de numere în text ca să nu mai dea eroare tabelul
             df_istoric = pd.DataFrame(date_sistem["generari"])
-            df_istoric['numere'] = df_istoric['numere'].astype(str) # Forțăm format text
-            
+            df_istoric['numere'] = df_istoric['numere'].astype(str)
             st.dataframe(df_istoric, use_container_width=True)
-            
             if st.button("🗑️ Reset"): 
                 date_sistem["generari"] = []
                 salveaza_tot(date_sistem)
@@ -89,9 +89,11 @@ if len(date_loto) >= 10:
     reci = [n for n in range(1, 81) if n not in u10]
     calde = [n for n, f in Counter(u10).items() if f >= 4]
     vecini = []
-    for n in date_loto[0]: # Doar ultima extragere
-        if n > 1: vecini.append(n-1)
-        if n < 80: vecini.append(n+1)
+    # FIX: Verificăm dacă există extrageri înainte de a accesa indexul 0
+    if date_loto:
+        for n in date_loto[0]:
+            if n > 1: vecini.append(n-1)
+            if n < 80: vecini.append(n+1)
     vecini = list(set(vecini))
 
 # --- TAB-URI ---
@@ -101,14 +103,11 @@ with tab1:
     if len(date_loto) >= 3:
         numere_3 = [n for sub in date_loto[:3] for n in sub]
         pool_3 = list(set(numere_3))
-        
-        # Buton mare de start
         if st.button("🚀 REGELE (90%)", use_container_width=True):
             vars = [random.sample(pool_3, 4) for _ in range(18)]
             log_generare("Regele 90%", vars); st.balloons()
             for v in vars: st.success(f"🍀 {sorted(v)}")
         
-        # Butoane restrânse în coloane
         c1, c2 = st.columns(2)
         with c1:
             if st.button("🔥 FIERBINȚI", use_container_width=True):
@@ -158,29 +157,22 @@ with tab_f2:
 
 with tab_649:
     st.subheader("🍀 JOC 6/49 - 5 Variante")
-    
-    # CSS special pentru butonul 6/49 (Scris verde, contur verde)
     st.markdown("""<style> div.stButton > button[key="btn_649_verde"] {
         color: #28a745 !important; border: 2px solid #28a745 !important; font-weight: bold !important;
     }</style>""", unsafe_allow_html=True)
 
     if st.button("🟢 GENEREAZĂ 5 VAR. 6/49", use_container_width=True, key="btn_649_verde"):
-        # Generăm 5 variante separate
         variante_649 = []
         for _ in range(5):
             urna = list(range(1, 50))
             random.shuffle(urna)
             v = sorted(random.sample(urna, 6))
             variante_649.append(v)
-        
-        # Salvăm în istoric (log)
         log_generare("6/49 Random", variante_649)
-        
-        # Afișare curată pe ecran (fără paranteze duble)
         for i, var in enumerate(variante_649):
             st.success(f"Bilet {i+1}: {var}")
-        
         st.snow()
+
 with tab2:
     input_m = st.text_input("Numerele tale:", key="m_in")
     if st.button("🎰 Amestecă", use_container_width=True):
@@ -196,11 +188,12 @@ if este_admin:
     with st.expander("⚙️ GESTIUNE DATE"):
         raw = st.text_input("Extragere nouă:")
         if st.button("💾 Salvează"):
-            numere = [int(n) for n in raw.replace(",", " ").split() if n.strip().isdigit()]
-            if len(numere) == 20:
-                date_sistem["extrageri"].insert(0, numere)
-                salveaza_tot(date_sistem); st.rerun()
-
+            try:
+                numere = [int(n) for n in raw.replace(",", " ").split() if n.strip().isdigit()]
+                if len(numere) == 20:
+                    date_sistem["extrageri"].insert(0, numere)
+                    salveaza_tot(date_sistem); st.rerun()
+            except: st.error("Format invalid!")
 
 
 
