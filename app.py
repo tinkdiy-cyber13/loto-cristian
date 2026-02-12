@@ -153,7 +153,7 @@ with tab_649:
     c649_1, c649_2 = st.columns(2)
     with c649_1:
         if st.button("🟢 GENEREAZĂ 6/49", use_container_width=True, key="btn_649"):
-            v = sorted(random.sample(range(1, 50), 6))
+            v = sorted(random.sample(range(1, 50), 6)) for _ in range(5)]
             log_generare("6/49", [v])
             st.success(f"Bilet: {v}")
             st.snow()
@@ -177,6 +177,7 @@ if este_admin:
             if len(numere) == 20:
                 date_sistem["extrageri"].insert(0, numere)
                 salveaza_tot(date_sistem); st.rerun()
+
 
 
 
