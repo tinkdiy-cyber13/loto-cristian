@@ -162,7 +162,7 @@ with tab_f2:
                     for v in vars: st.error(f"4: {sorted(v)}")
             st.divider()
             if st.button("5️⃣ 3 FIERBINȚI (3 VAR)"):
-                vars = [random.sample(fierbinti_u3, 3) for _ in range(3)]
+                vars = [random.sample(fierbinti_u3, 3) for _ in range(9)]
                 log_generare("3 Fierbinti", vars)
                 for v in vars: st.warning(f"5: {sorted(v)}")
         else: st.warning("Nu sunt destule numere FIERBINȚI (min 2) pentru aceste mixuri!")
@@ -179,6 +179,7 @@ with tab2:
 
 with tab3:
     st.dataframe(pd.DataFrame(date_loto), use_container_width=True)
+
 
 
 
