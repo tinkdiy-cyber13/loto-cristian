@@ -117,7 +117,7 @@ with tab1:
         pool_foc_ist = list(set(fierbinti_ist + [n for n, f in numaratoare.items() if f == 2]))
 
         if st.button("🚀 REGELE (90%)"):
-            vars = [random.sample(pool_3, 4) for _ in range(50)]
+            vars = [random.sample(pool_3, 4) for _ in range(18)]
             log_generare("Regele 90%", vars); st.balloons()
             for v in vars: st.success(f"🍀 {sorted(v)}")
         
@@ -125,22 +125,22 @@ with tab1:
         col1, col2 = st.columns(2)
         with col1:
             if st.button("🔥 MIX FIERBINȚI"):
-                vars = [random.sample(fierbinti_3 + pool_3, 4) for _ in range(33)]
+                vars = [random.sample(fierbinti_3 + pool_3, 4) for _ in range(9)]
                 log_generare("Fierbinți", vars)
                 for v in vars: st.error(f"🔥 {sorted(v)}")
             
             if st.button("📊 CALD/RECE ISTORIC"):
-                vars = [random.sample(pool_foc_ist, 4) for _ in range(33)]
+                vars = [random.sample(pool_foc_ist, 4) for _ in range(9)]
                 log_generare("Cald/Rece Istoric", vars)
                 for v in vars: st.warning(f"📊 {sorted(v)}")
         with col2:
             if st.button("🎰 RANDOM 3"):
-                vars = [random.sample(pool_3, 4) for _ in range(33)]
+                vars = [random.sample(pool_3, 4) for _ in range(9)]
                 log_generare("Random 3", vars)
                 for v in vars: st.info(f"🎲 {sorted(v)}")
 
             if st.button("🌎 RANDOM TOTAL"):
-                vars = [random.sample(pool_tot, 4) for _ in range(33)]
+                vars = [random.sample(pool_tot, 4) for _ in range(9)]
                 log_generare("Random Total", vars)
                 for v in vars: st.info(f"🌎 {sorted(v)}")
     else:
@@ -170,6 +170,7 @@ with st.expander("📩 Trimite mesaj"):
 if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem.get("mesaje", [])): st.info(f"{m['data']}: {m['text']}")
+
 
 
 
