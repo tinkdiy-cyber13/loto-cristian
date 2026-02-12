@@ -107,8 +107,8 @@ with tab1:
     date_loto = date_sistem.get("extrageri", [])
     if len(date_loto) >= 3:
         numere_3 = [n for sub in date_loto[:3] for n in sub]
-        pool_3 = list(set(numere_3))
-        fierbinti_3 = [n for n, f in Counter(numere_3).items() if f >= 2]
+        pool_3 = list(set(numere_2))
+        fierbinti_2 = [n for n, f in Counter(numere_3).items() if f >= 2]
         
         toate_ist = [n for sub in date_loto for n in sub]
         pool_tot = list(set(toate_ist))
@@ -117,7 +117,7 @@ with tab1:
         pool_foc_ist = list(set(fierbinti_ist + [n for n, f in numaratoare.items() if f == 2]))
 
         if st.button("🚀 REGELE (90%)"):
-            vars = [random.sample(pool_3, 3) for _ in range(7)]
+            vars = [random.sample(pool_3, 4) for _ in range(7)]
             log_generare("Regele 90%", vars); st.balloons()
             for v in vars: st.success(f"🍀 {sorted(v)}")
         
@@ -170,6 +170,7 @@ with st.expander("📩 Trimite mesaj"):
 if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem.get("mesaje", [])): st.info(f"{m['data']}: {m['text']}")
+
 
 
 
