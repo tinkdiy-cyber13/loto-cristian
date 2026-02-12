@@ -8,10 +8,10 @@ import time
 from datetime import datetime, timedelta
 
 # CONFIGURARE
-st.set_page_config(page_title="Loto Pro v11.7.1", page_icon="🎰", layout="centered")
+st.set_page_config(page_title="Loto 20/80 v11.7.1", page_icon="🎰", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
-PAROLA_ADMIN = "admin13$777$13" 
+PAROLA_ADMIN = "admin13$999$13" 
 
 def get_ora_ro():
     return (datetime.utcnow() + timedelta(hours=2)).strftime("%d-%m %H:%M")
@@ -41,7 +41,7 @@ def log_generare(metoda, variante):
     salveaza_tot(date_sistem)
 
 # --- DESIGN ---
-st.title("🍀 Loto Pro v11.7.1")
+st.title("🍀 Loto 20/80 v11.7.1")
 st.markdown(f"<div style='text-align: right; margin-top: -55px;'><span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 2px solid #22d3ee; padding: 4px 12px; border-radius: 15px; background-color: rgba(34, 211, 238, 0.1);'>OO: {date_sistem.get('vizite', 0)}</span></div>", unsafe_allow_html=True)
 
 # SIDEBAR ADMIN
@@ -179,6 +179,7 @@ with tab2:
 
 with tab3:
     st.dataframe(pd.DataFrame(date_loto), use_container_width=True)
+
 
 
 
