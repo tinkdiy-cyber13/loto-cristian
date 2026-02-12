@@ -157,15 +157,30 @@ with tab_f2:
             for v in vars: st.warning(f"5: {sorted(v)}")
 
 with tab_649:
-    st.subheader("🍀 JOC 6/49")
-    c649_1, c649_2 = st.columns(2)
-    with c649_1:
-        if st.button("🟢 GENEREAZĂ 6/49", use_container_width=True, key="btn_649"):
-            v = sorted(random.sample(range(1, 50), 6) for _ in range(5))
-            log_generare("6/49", [v])
-            st.success(f"Bilet: {v}")
-            st.snow()
+    st.subheader("🍀 JOC 6/49 - 5 Variante")
+    
+    # CSS special pentru butonul 6/49 (Scris verde, contur verde)
+    st.markdown("""<style> div.stButton > button[key="btn_649_verde"] {
+        color: #28a745 !important; border: 2px solid #28a745 !important; font-weight: bold !important;
+    }</style>""", unsafe_allow_html=True)
 
+    if st.button("🟢 GENEREAZĂ 5 VAR. 6/49", use_container_width=True, key="btn_649_verde"):
+        # Generăm 5 variante separate
+        variante_649 = []
+        for _ in range(5):
+            urna = list(range(1, 50))
+            random.shuffle(urna)
+            v = sorted(random.sample(urna, 6))
+            variante_649.append(v)
+        
+        # Salvăm în istoric (log)
+        log_generare("6/49 Random", variante_649)
+        
+        # Afișare curată pe ecran (fără paranteze duble)
+        for i, var in enumerate(variante_649):
+            st.success(f"Bilet {i+1}: {var}")
+        
+        st.snow()
 with tab2:
     input_m = st.text_input("Numerele tale:", key="m_in")
     if st.button("🎰 Amestecă", use_container_width=True):
@@ -185,6 +200,7 @@ if este_admin:
             if len(numere) == 20:
                 date_sistem["extrageri"].insert(0, numere)
                 salveaza_tot(date_sistem); st.rerun()
+
 
 
 
