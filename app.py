@@ -69,8 +69,16 @@ este_admin = (parola_introdusa == PAROLA_ADMIN)
 if este_admin:
     with st.sidebar.expander("📋 ISTORIC"):
         if date_sistem.get("generari"):
-            st.dataframe(pd.DataFrame(date_sistem["generari"]), use_container_width=True)
-            if st.button("🗑️ Reset"): date_sistem["generari"] = []; salveaza_tot(date_sistem); st.rerun()
+            # REPARARE: Convertim listele de numere în text ca să nu mai dea eroare tabelul
+            df_istoric = pd.DataFrame(date_sistem["generari"])
+            df_istoric['numere'] = df_istoric['numere'].astype(str) # Forțăm format text
+            
+            st.dataframe(df_istoric, use_container_width=True)
+            
+            if st.button("🗑️ Reset"): 
+                date_sistem["generari"] = []
+                salveaza_tot(date_sistem)
+                st.rerun()
 
 # --- LOGICA DATE ---
 date_loto = date_sistem.get("extrageri", [])
@@ -177,6 +185,7 @@ if este_admin:
             if len(numere) == 20:
                 date_sistem["extrageri"].insert(0, numere)
                 salveaza_tot(date_sistem); st.rerun()
+
 
 
 
