@@ -8,10 +8,10 @@ import time
 from datetime import datetime, timedelta
 
 # CONFIGURARE
-st.set_page_config(page_title="Loto Pro v11.8.2", page_icon="🎰", layout="centered")
+st.set_page_config(page_title="Loto 20/80 v11.8.2", page_icon="🎰", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
-PAROLA_ADMIN = "admin13$777$13" 
+PAROLA_ADMIN = "admin13$999$13" 
 
 def get_ora_ro():
     return (datetime.utcnow() + timedelta(hours=2)).strftime("%d-%m %H:%M")
@@ -58,7 +58,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- TITLU ȘI OO ---
-st.title("🍀 Loto Pro v11.8.2")
+st.title("🍀 Loto 20/80 v11.8.2")
 st.markdown(f"<div style='text-align: right; margin-top: -55px;'><span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 2px solid #22d3ee; padding: 4px 12px; border-radius: 15px; background-color: rgba(34, 211, 238, 0.1);'>OO: {date_sistem.get('vizite', 0)}</span></div>", unsafe_allow_html=True)
 
 # --- ADMIN PANEL ---
@@ -116,9 +116,9 @@ with tab1:
                 vars = [random.sample(pool_3, 4) for _ in range(9)]
                 log_generare("Random 3", vars)
                 for v in vars: st.info(f"🎲 {sorted(v)}")
-            if st.button("🌎 TOTAL", use_container_width=True):
+            if st.button("🌎 4/80", use_container_width=True):
                 vars = [random.sample(range(1,81), 4) for _ in range(9)]
-                log_generare("Total", vars)
+                log_generare("4/80", vars)
                 for v in vars: st.info(f"🌎 {sorted(v)}")
     else: st.warning("Minim 3 extrageri!")
 
@@ -144,7 +144,7 @@ with tab_f2:
                 log_generare("2F+2Calde", vars)
                 for v in vars: st.error(f"4: {sorted(v)}")
         if st.button("5️⃣ 3 FIERBINȚI", use_container_width=True):
-            vars = [random.sample(fierbinti_u3, 3) for _ in range(3)]
+            vars = [random.sample(fierbinti_u3, 3) for _ in range(9)]
             log_generare("3Fierbinti", vars)
             for v in vars: st.warning(f"5: {sorted(v)}")
 
@@ -152,7 +152,7 @@ with tab_649:
     st.subheader("🍀 JOC 6/49")
     c649_1, c649_2 = st.columns(2)
     with c649_1:
-        if st.button("🟢 GENEREAZĂ 6/49", use_container_width=True, key="btn_649_verde"):
+        if st.button("🟢 GENEREAZĂ 6/49", use_container_width=True, key="btn_649"):
             v = sorted(random.sample(range(1, 50), 6))
             log_generare("6/49", [v])
             st.success(f"Bilet: {v}")
@@ -177,6 +177,7 @@ if este_admin:
             if len(numere) == 20:
                 date_sistem["extrageri"].insert(0, numere)
                 salveaza_tot(date_sistem); st.rerun()
+
 
 
 
