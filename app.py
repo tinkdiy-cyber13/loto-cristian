@@ -157,7 +157,7 @@ with tab1:
         numere_3 = [n for sub in date_loto[:3] for n in sub]
         pool_3 = list(set(numere_3))
         if st.button("👑 REGELE (90%)", use_container_width=True):
-            vars = [random.sample(pool_3, 3) for _ in range(18)]
+            vars = [random.sample(pool_3, 3) for _ in range(9)]
             log_generare("Regele 90%", vars); st.balloons()
             for v in vars: st.success(f"🍀 {sorted(v)}")
         
@@ -215,7 +215,7 @@ with tab_f2:
 
         if st.button("🥇 3 FIERBINȚI (Sistem Gold)", use_container_width=True, key="btn_3_fierbinti_gold"):
             if len(fierbinti_u3) >= 3:
-                vars = [random.sample(fierbinti_u3, 3) for _ in range(5)]
+                vars = [random.sample(fierbinti_u3, 3) for _ in range(9)]
                 log_generare("3 FIERBINTI GOLD", vars)
                 st.balloons()
                 for v in vars:
@@ -288,6 +288,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
