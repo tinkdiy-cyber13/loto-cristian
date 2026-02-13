@@ -256,7 +256,7 @@ with tab3:
         df_arhiva = pd.DataFrame(date_loto)
         
         # 1. Numerotăm coloanele de la 1 la 20
-        df_arhiva.columns = [{i+1}" for i in range(20)]
+        df_arhiva.columns = [f"Nr.{i+1}" for i in range(20)]
         
         # 2. Generăm Indexul Special (Ex: 1V, 2V, 3J...)
         zile_sapt = ["L", "Ma", "Mi", "J", "V", "S", "D"]
@@ -278,7 +278,7 @@ with tab3:
         # Afișăm tabelul customizat
         st.dataframe(df_arhiva, use_container_width=True)
         
-        st.caption("💡 Indexul (ex: 1V) reprezintă numărul de ordine și ziua (V=Vineri, J=Joi, etc.)")
+        st.caption("💡 Indexul (ex: 1V) reprezintă numărul de ordine și ziua (J=Joi, M-Miercuri etc.)")
     else:
         st.warning("Arhiva este goală!")
 
@@ -292,6 +292,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
