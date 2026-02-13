@@ -157,7 +157,7 @@ with tab1:
         numere_3 = [n for sub in date_loto[:3] for n in sub]
         pool_3 = list(set(numere_3))
         if st.button("👑 REGELE (90%)", use_container_width=True):
-            vars = [random.sample(pool_3, 3) for _ in range(9)]
+            vars = [random.sample(pool_3, 3) for _ in range(5)]
             log_generare("Regele 90%", vars); st.balloons()
             for v in vars: st.success(f"🍀 {sorted(v)}")
         
@@ -168,16 +168,16 @@ with tab1:
                 log_generare("Fierbinti", vars)
                 for v in vars: st.error(f"🔥 {sorted(v)}")
             if st.button("📊 CALD/RECE", use_container_width=True):
-                vars = [random.sample(pool_3, 4) for _ in range(9)]
+                vars = [random.sample(pool_3, 4) for _ in range(5)]
                 log_generare("Cald/Rece", vars)
                 for v in vars: st.warning(f"📊 {sorted(v)}")
         with c2:
             if st.button("🎲 RANDOM 3", use_container_width=True):
-                vars = [random.sample(pool_3, 4) for _ in range(9)]
+                vars = [random.sample(pool_3, 4) for _ in range(5)]
                 log_generare("Random 3", vars)
                 for v in vars: st.info(f"🎲 {sorted(v)}")
             if st.button("🌎 4/80", use_container_width=True):
-                vars = [random.sample(range(1,81), 4) for _ in range(9)]
+                vars = [random.sample(range(1,81), 4) for _ in range(5)]
                 log_generare("4/80", vars)
                 for v in vars: st.info(f"🌎 {sorted(v)}")
     else: st.warning("Minim 3 extrageri!")
@@ -288,6 +288,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
