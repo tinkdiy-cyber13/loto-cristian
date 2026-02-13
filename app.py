@@ -115,6 +115,21 @@ if este_admin:
                     st.error("Te rog introdu exact 20 de numere!")
             except:
                 st.error("Eroare format! Folosește spații între numere.")
+                
+    # --- BUTON NOU: MENTENANȚĂ ARHIVĂ (Limită 13) ---
+    st.divider()
+    st.warning("🛠️ MENTENANȚĂ SISTEM")
+    if st.button("🧹 Păstrează doar ultimele 13 extrageri", key="btn_clean_13"):
+        if len(date_sistem["extrageri"]) > 13:
+            vechi = len(date_sistem["extrageri"])
+            # Păstrăm doar primele 13 (cele mai noi)
+            date_sistem["extrageri"] = date_sistem["extrageri"][:13]
+            salveaza_tot(date_sistem)
+            st.success(f"✅ Curățenie făcută! Am eliminat {vechi - 13} extrageri vechi.")
+            time.sleep(1)
+            st.rerun()
+        else:
+            st.info("Arhiva este deja sub limita de 13 extrageri.")
 
 # --- SFÂRȘIT ADMIN PANEL ---
 
@@ -247,6 +262,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
