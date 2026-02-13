@@ -74,9 +74,8 @@ if este_admin:
     with st.sidebar.expander("📋 VERIFICARE BILETE (AUTO)", expanded=True):
         if date_sistem.get("generari") and date_sistem.get("extrageri"):
             u_ex = date_sistem["extrageri"]
-            ultima_ex = set(u_ex[0]) if isinstance(u_ex[0], list) else set(u_ex)
+            ultima_ex = set(u_ex) if isinstance(u_ex, list) else set(u_ex)
             st.write(f"Verificăm cu: `{sorted(list(ultima_ex))}`")
-            
             for g in date_sistem["generari"]:
                 nimerite = set(g["numere"]) & ultima_ex
                 count = len(nimerite)
@@ -95,19 +94,16 @@ if este_admin:
             df_istoric = pd.DataFrame(date_sistem["generari"])
             df_istoric['numere'] = df_istoric['numere'].astype(str)
             st.dataframe(df_istoric, use_container_width=True)
-            
-            # CHEIE UNICĂ 1
-            if st.button("🗑️ Reset Complet Istoric", key="reset_final_unique_v1"): 
+            if st.button("🗑️ Reset Complet Istoric", key="reset_final_v99"): 
                 date_sistem["generari"] = []
                 salveaza_tot(date_sistem)
                 st.rerun()
 
-    # --- 3. GESTIONARE DATE (Aici bagi extragerea nouă) ---
+    # --- 3. GESTIONARE DATE (AICI ERA EROAREA DE ALINIERE) ---
     with st.expander("⚙️ GESTIONARE DATE", expanded=False):
-        # Aliniere perfectă sub expander
-        raw_input = st.text_input("Introdu extragerea nouă (20 nr):", key="input_admin_final_99")
-        
-        if st.button("💾 Salvează Extragerea", key="btn_save_final_99"):
+        raw_input = st.text_input("Introdu extragerea nouă (20 nr):", key="input_extragere_v99")
+        # BUTONUL TREBUIE SĂ FIE EXACT SUB TEXT_INPUT (ALINIAT LA STÂNGA)
+        if st.button("💾 Salvează Extragerea", key="save_extragere_v99"):
             try:
                 numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
                 if len(numere) == 20:
@@ -296,6 +292,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
