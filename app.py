@@ -250,7 +250,37 @@ with tab2:
         except: st.error("Eroare!")
 
 with tab3:
-    st.dataframe(pd.DataFrame(date_loto), use_container_width=True)
+    st.subheader("📜 Arhiva Inteligentă (Ultimele 13)")
+    if date_loto:
+        # Creăm tabelul de bază
+        df_arhiva = pd.DataFrame(date_loto)
+        
+        # 1. Numerotăm coloanele de la 1 la 20
+        df_arhiva.columns = [f"Nr.{i+1}" for i in range(20)]
+        
+        # 2. Generăm Indexul Special (Ex: 1V, 2V, 3J...)
+        zile_sapt = ["L", "Ma", "Mi", "J", "V", "S", "D"]
+        index_special = []
+        
+        # Luăm data curentă și scădem câte o zi (sau folosim data salvării dacă am avea-o)
+        # Pentru simplitate și logică de 2/zi, calculăm indexul raportat la azi
+        acum = datetime.utcnow() + timedelta(hours=2)
+        
+        for i in range(len(df_arhiva)):
+            # Calculăm ziua săptămânii pentru fiecare rând (2 extrageri pe zi)
+            # i // 2 ne dă câte zile dăm înapoi
+            data_ex = acum - timedelta(days=(i // 2))
+            zi_litera = zile_sapt[data_ex.weekday()]
+            index_special.append(f"{i+1}{zi_litera}")
+        
+        df_arhiva.index = index_special
+        
+        # Afișăm tabelul customizat
+        st.dataframe(df_arhiva, use_container_width=True)
+        
+        st.caption("💡 Indexul (ex: 1V) reprezintă numărul de ordine și ziua (V=Vineri, J=Joi, etc.)")
+    else:
+        st.warning("Arhiva este goală!")
 
 if este_admin:
     with st.expander("⚙️ GESTIUNE DATE"):
@@ -262,6 +292,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
