@@ -69,18 +69,7 @@ st.sidebar.subheader("🔐 Control Admin")
 parola_introdusa = st.sidebar.text_input("Parola:", type="password")
 este_admin = (parola_introdusa == PAROLA_ADMIN)
 
-if este_admin:
-    with st.sidebar.expander("📋 ISTORIC"):
-        if date_sistem.get("generari"):
-            df_istoric = pd.DataFrame(date_sistem["generari"])
-            df_istoric['numere'] = df_istoric['numere'].astype(str)
-            st.dataframe(df_istoric, use_container_width=True)
-            if st.button("🗑️ Reset"): 
-                date_sistem["generari"] = []
-                salveaza_tot(date_sistem)
-                st.rerun()
-                if este_admin:
-    VERIFICARE BILETE (AUTO)", expanded=True):
+VERIFICARE BILETE (AUTO)", expanded=True):
         # Luăm ultima extragere (primul set de 20 nr din arhivă)
         if date_sistem.get("generari") and date_sistem.get("extrageri"):
             ultima_ex = set(date_sistem["extrageri"][0]) 
@@ -97,6 +86,29 @@ if este_admin:
                     st.write(f"⚪ {g['ora']} | {count} nr")
         else:
             st.info("Nicio generare sau extragere pentru verificare.")
+
+    # --- 2. ISTORICUL TABELAR (Sub Verificator) ---
+    with st.sidebar.expander("📋 ISTORIC TABEL"):
+        if date_sistem.get("generari"):
+            df_istoric = pd.DataFrame(date_sistem["generari"])
+            df_istoric['numere'] = df_istoric['numere'].astype(str)
+            st.dataframe(df_istoric, use_container_width=True)
+            if st.button("🗑️ Reset Complet"): 
+                date_sistem["generari"] = []
+                salveaza_tot(date_sistem)
+                st.rerun()
+
+    # --- 3. GESTIONARE DATE (Unde bagi extragerea nouă) ---
+    with st.expander("⚙️ GESTIONARE DATE (BAGĂ EXTRAGEREA)"):
+        raw_input = st.text_input("Introdu extragerea nouă (20 nr):")
+        if st.button("💾 Salvează Extragerea"):
+            try:
+                numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
+                if len(numere) == 20:
+                    date_sistem["extrageri"].insert(0, numere)
+                    salveaza_tot(date_sistem)
+                    st.success("✅ Salvat!"); st.rerun()
+            except: st.error("Eroare format!")
 
     # --- 2. ISTORICUL TABELAR (Sub Verificator) ---
     with st.sidebar.expander("📋 ISTORIC TABEL"):
@@ -250,6 +262,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
