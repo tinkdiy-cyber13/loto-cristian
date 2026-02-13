@@ -70,23 +70,12 @@ parola_introdusa = st.sidebar.text_input("Parola:", type="password")
 este_admin = (parola_introdusa == PAROLA_ADMIN)
 
 if este_admin:
-    with st.sidebar.expander("📋 ISTORIC"):
-        if date_sistem.get("generari"):
-            df_istoric = pd.DataFrame(date_sistem["generari"])
-            df_istoric['numere'] = df_istoric['numere'].astype(str)
-            st.dataframe(df_istoric, use_container_width=True)
-            if st.button("🗑️ Reset"): 
-                date_sistem["generari"] = []
-                salveaza_tot(date_sistem)
-                st.rerun()
-
-if este_admin:
-    # --- 1. VERIFICATORUL AUTOMAT (Sub Parolă) ---
+    # --- 1. VERIFICATORUL AUTOMAT ---
     with st.sidebar.expander("📋 VERIFICARE BILETE (AUTO)", expanded=True):
         if date_sistem.get("generari") and date_sistem.get("extrageri"):
-            # Luăm prima listă de 20 nr (cea mai recentă)
-            u_ex = date_sistem["extrageri"][0]
-            ultima_ex = set(u_ex) if isinstance(u_ex, list) else set()
+            # Luăm prima extragere din listă
+            u_ex = date_sistem["extrageri"][0] if isinstance(date_sistem["extrageri"][0], list) else date_sistem["extrageri"]
+            ultima_ex = set(u_ex)
             st.write(f"Verificăm cu: `{sorted(list(ultima_ex))}`")
             
             for g in date_sistem["generari"]:
@@ -99,18 +88,35 @@ if este_admin:
                 else:
                     st.write(f"⚪ {g['ora']} | {count} nr")
         else:
-            st.info("Nicio dată disponibilă.")
+            st.info("Nicio generare sau extragere nouă.")
 
-    # --- 2. ISTORICUL TABELAR ---
+    # --- 2. ISTORICUL TABELAR (AICI APARE TABELUL TĂU!) ---
     with st.sidebar.expander("📋 ISTORIC TABEL"):
         if date_sistem.get("generari"):
             df_istoric = pd.DataFrame(date_sistem["generari"])
             df_istoric['numere'] = df_istoric['numere'].astype(str)
             st.dataframe(df_istoric, use_container_width=True)
-            if st.button("🗑️ Reset Complet"): 
+            
+            # AM PUS O CHEIE UNICĂ (key) CA SĂ NU MAI DEA EROARE
+            if st.button("🗑️ Reset Complet Istoric", key="reset_istoric_final_unique"): 
                 date_sistem["generari"] = []
                 salveaza_tot(date_sistem)
                 st.rerun()
+        else:
+            st.write("Istoricul este gol.")
+
+    # --- 3. GESTIONARE DATE (Unde bagi extragerea nouă) ---
+    with st.expander("⚙️ GESTIONARE DATE", expanded=False):
+        raw_input = st.text_input("Introdu extragerea nouă (20 nr):")
+        # ALTĂ CHEIE UNICĂ PENTRU BUTONUL DE SALVARE
+        if st.button("💾 Salvează Extragerea", key="salveaza_extragere_unique"):
+            try:
+                numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
+                if len(numere) == 20:
+                    date_sistem["extrageri"].insert(0, numere)
+                    salveaza_tot(date_sistem)
+                    st.success("✅ Salvat!"); st.rerun()
+            except: st.error("Eroare format!")
 
 
     # --- 3. GESTIONARE DATE (Unde bagi extragerea nouă) ---
@@ -277,6 +283,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
