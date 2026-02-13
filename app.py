@@ -128,16 +128,22 @@ if este_admin:
             except: st.error("Eroare format!")
 
 
-    # --- 3. GESTIONARE DATE (Unde bagi extragerea nouă) ---
+    # --- 3. GESTIONARE DATE (Aici bagi extragerea nouă) ---
     with st.expander("⚙️ GESTIONARE DATE (BAGĂ EXTRAGEREA)"):
-       raw_input = st.text_input("Introdu extragerea nouă (20 nr):", key="input_admin_unic")
-        if st.button("💾 Salvează Extragerea"):
-            try:numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
+        # Verifică să ai exact același număr de spații în fața ambelor rânduri de mai jos!
+        raw_input = st.text_input("Introdu extragerea nouă (20 nr):", key="input_admin_unic_final")
+        if st.button("💾 Salvează Extragerea", key="btn_save_unic_final"):
+            try:
+                numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
                 if len(numere) == 20:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem)
-                    st.success("✅ Salvat!"); st.rerun()
-            except: st.error("Eroare format!")
+                    st.success("✅ Salvat!")
+                    st.rerun()
+                else:
+                    st.error("Te rog introdu exact 20 de numere!")
+            except:
+                st.error("Eroare format! Folosește spații între numere.")
 
     # --- 2. ISTORICUL TABELAR (Sub Verificator) ---
     with st.sidebar.expander("📋 ISTORIC TABEL"):
@@ -291,6 +297,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
