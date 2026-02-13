@@ -132,8 +132,7 @@ if este_admin:
     with st.expander("⚙️ GESTIONARE DATE (BAGĂ EXTRAGEREA)"):
        raw_input = st.text_input("Introdu extragerea nouă (20 nr):", key="input_admin_unic")
         if st.button("💾 Salvează Extragerea"):
-            try:
-                numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
+            try:numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
                 if len(numere) == 20:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem)
@@ -292,6 +291,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
