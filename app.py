@@ -64,16 +64,17 @@ st.markdown("""
 st.title("🍀 Loto 20/80 v11.8.5")
 st.markdown(f"<div style='text-align: right; margin-top: -55px;'><span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 2px solid #22d3ee; padding: 4px 12px; border-radius: 15px; background-color: rgba(34, 211, 238, 0.1);'>OO: {date_sistem.get('vizite', 0)}</span></div>", unsafe_allow_html=True)
 
-# --- ADMIN PANEL ---
+# --- ADMIN PANEL (VARIANTA UNICĂ ȘI FINALĂ) ---
 st.sidebar.subheader("🔐 Control Admin")
 parola_introdusa = st.sidebar.text_input("Parola:", type="password")
 este_admin = (parola_introdusa == PAROLA_ADMIN)
 
 if este_admin:
-    # --- 1. VERIFICATORUL AUTOMAT (Sub Parolă) ---
+    # 1. VERIFICATORUL AUTOMAT (În Sidebar)
     with st.sidebar.expander("📋 VERIFICARE BILETE (AUTO)", expanded=True):
         if date_sistem.get("generari") and date_sistem.get("extrageri"):
-            u_ex = date_sistem["extrageri"][0] if isinstance(date_sistem["extrageri"][0], list) else date_sistem["extrageri"]
+            # Luăm prima extragere din listă
+            u_ex = date_sistem["extrageri"][0] if isinstance(date_sistem["extrageri"], list) else date_sistem["extrageri"]
             ultima_ex = set(u_ex)
             st.write(f"Verificăm cu: `{sorted(list(ultima_ex))}`")
             for g in date_sistem["generari"]:
@@ -88,7 +89,7 @@ if este_admin:
         else:
             st.info("Nicio generare sau extragere nouă.")
 
-    # --- 2. ISTORICUL TABELAR ---
+    # 2. ISTORICUL TABELAR (În Sidebar)
     with st.sidebar.expander("📋 ISTORIC TABEL"):
         if date_sistem.get("generari"):
             df_istoric = pd.DataFrame(date_sistem["generari"])
@@ -99,38 +100,8 @@ if este_admin:
                 salveaza_tot(date_sistem)
                 st.rerun()
 
-    # --- 3. GESTIONARE DATE (REPARAT ALINIEREA AICI) ---
-    with st.expander("⚙️ GESTIONARE DATE", expanded=False):
-        raw_input = st.text_input("Introdu extragerea nouă (20 nr):", key="input_extragere_v101")
-        if st.button("💾 Salvează Extragerea", key="save_extragere_v101"):
-            try:
-                numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
-                if len(numere) == 20:
-                    date_sistem["extrageri"].insert(0, numere)
-                    salveaza_tot(date_sistem)
-                    st.success("✅ Salvat!"); st.rerun()
-                else:
-                    st.error("Pune fix 20 de numere!")
-            except:
-                st.error("Eroare format!")
-                
-    # --- 3. GESTIONARE DATE (Unde bagi extragerea nouă) ---
-    with st.expander("⚙️ GESTIONARE DATE", expanded=False):
-        raw_input = st.text_input("Introdu extragerea nouă (20 nr):")
-        # ALTĂ CHEIE UNICĂ PENTRU BUTONUL DE SALVARE
-        if st.button("💾 Salvează Extragerea", key="salveaza_extragere_unique"):
-            try:
-                numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
-                if len(numere) == 20:
-                    date_sistem["extrageri"].insert(0, numere)
-                    salveaza_tot(date_sistem)
-                    st.success("✅ Salvat!"); st.rerun()
-            except: st.error("Eroare format!")
-
-
-    # --- 3. GESTIONARE DATE (Aici bagi extragerea nouă) ---
-    with st.expander("⚙️ GESTIONARE DATE (BAGĂ EXTRAGEREA)"):
-        # Verifică să ai exact același număr de spații în fața ambelor rânduri de mai jos!
+    # 3. GESTIONARE DATE (Pe centrul paginii - DOAR UNA)
+    with st.expander("⚙️ GESTIONARE DATE (BAGĂ EXTRAGEREA)", expanded=False):
         raw_input = st.text_input("Introdu extragerea nouă (20 nr):", key="input_admin_unic_final")
         if st.button("💾 Salvează Extragerea", key="btn_save_unic_final"):
             try:
@@ -145,28 +116,7 @@ if este_admin:
             except:
                 st.error("Eroare format! Folosește spații între numere.")
 
-    # --- 2. ISTORICUL TABELAR (Sub Verificator) ---
-    with st.sidebar.expander("📋 ISTORIC TABEL"):
-        if date_sistem.get("generari"):
-            df_istoric = pd.DataFrame(date_sistem["generari"])
-            df_istoric['numere'] = df_istoric['numere'].astype(str)
-            st.dataframe(df_istoric, use_container_width=True)
-            if st.button("🗑️ Reset Complet"): 
-                date_sistem["generari"] = []
-                salveaza_tot(date_sistem)
-                st.rerun()
-
-    # --- 3. GESTIONARE DATE (Unde bagi extragerea nouă) ---
-    with st.expander("⚙️ GESTIONARE DATE (BAGĂ EXTRAGEREA)"):
-        raw_input = st.text_input("Introdu extragerea nouă (20 nr):")
-        if st.button("💾 Salvează Extragerea"):
-            try:
-                numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
-                if len(numere) == 20:
-                    date_sistem["extrageri"].insert(0, numere)
-                    salveaza_tot(date_sistem)
-                    st.success("✅ Salvat!"); st.rerun()
-            except: st.error("Eroare format!")
+# --- SFÂRȘIT ADMIN PANEL ---
 
 # --- LOGICA DATE ---
 date_loto = date_sistem.get("extrageri", [])
@@ -297,6 +247,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
