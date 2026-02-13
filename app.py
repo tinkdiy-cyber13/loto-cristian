@@ -73,9 +73,8 @@ if este_admin:
     # --- 1. VERIFICATORUL AUTOMAT ---
     with st.sidebar.expander("📋 VERIFICARE BILETE (AUTO)", expanded=True):
         if date_sistem.get("generari") and date_sistem.get("extrageri"):
-            # Luăm prima extragere din listă
-            u_ex = date_sistem["extrageri"][0] if isinstance(date_sistem["extrageri"][0], list) else date_sistem["extrageri"]
-            ultima_ex = set(u_ex)
+            u_ex = date_sistem["extrageri"]
+            ultima_ex = set(u_ex[0]) if isinstance(u_ex[0], list) else set(u_ex)
             st.write(f"Verificăm cu: `{sorted(list(ultima_ex))}`")
             
             for g in date_sistem["generari"]:
@@ -90,20 +89,33 @@ if este_admin:
         else:
             st.info("Nicio generare sau extragere nouă.")
 
-    # --- 2. ISTORICUL TABELAR (AICI APARE TABELUL TĂU!) ---
+    # --- 2. ISTORICUL TABELAR ---
     with st.sidebar.expander("📋 ISTORIC TABEL"):
         if date_sistem.get("generari"):
             df_istoric = pd.DataFrame(date_sistem["generari"])
             df_istoric['numere'] = df_istoric['numere'].astype(str)
             st.dataframe(df_istoric, use_container_width=True)
             
-            # AM PUS O CHEIE UNICĂ (key) CA SĂ NU MAI DEA EROARE
-            if st.button("🗑️ Reset Complet Istoric", key="reset_istoric_final_unique"): 
+            # CHEIE UNICĂ 1
+            if st.button("🗑️ Reset Complet Istoric", key="reset_final_unique_v1"): 
                 date_sistem["generari"] = []
                 salveaza_tot(date_sistem)
                 st.rerun()
-        else:
-            st.write("Istoricul este gol.")
+
+    # --- 3. GESTIONARE DATE (AICI ERA EROAREA) ---
+    with st.expander("⚙️ GESTIONARE DATE", expanded=False):
+        # CHEIE UNICĂ 2 pentru căsuța de text
+        raw_input = st.text_input("Introdu extragerea nouă (20 nr):", key="input_extragere_unique_v1")
+        
+        # CHEIE UNICĂ 3 pentru butonul de salvare
+        if st.button("💾 Salvează Extragerea", key="save_extragere_unique_v1"):
+            try:
+                numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
+                if len(numere) == 20:
+                    date_sistem["extrageri"].insert(0, numere)
+                    salveaza_tot(date_sistem)
+                    st.success("✅ Salvat!"); st.rerun()
+            except: st.error("Eroare format!")
 
     # --- 3. GESTIONARE DATE (Unde bagi extragerea nouă) ---
     with st.expander("⚙️ GESTIONARE DATE", expanded=False):
@@ -283,6 +295,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
