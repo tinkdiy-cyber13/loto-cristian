@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 st.set_page_config(page_title="Loto 20/80 v11.8.5", page_icon="🎰", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
-PAROLA_ADMIN = "admin13$999$13" 
+PAROLA_ADMIN = "admin13$333$13" 
 
 def get_ora_ro():
     return (datetime.utcnow() + timedelta(hours=2)).strftime("%d-%m %H:%M")
@@ -288,6 +288,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
