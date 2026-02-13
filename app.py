@@ -102,21 +102,22 @@ if este_admin:
                 salveaza_tot(date_sistem)
                 st.rerun()
 
-    # --- 3. GESTIONARE DATE (AICI ERA EROAREA) ---
+    # --- 3. GESTIONARE DATE (Aici bagi extragerea nouă) ---
     with st.expander("⚙️ GESTIONARE DATE", expanded=False):
-        # CHEIE UNICĂ 2 pentru căsuța de text
-        raw_input = st.text_input("Introdu extragerea nouă (20 nr):", key="input_extragere_unique_v1")
+        # Aliniere perfectă sub expander
+        raw_input = st.text_input("Introdu extragerea nouă (20 nr):", key="input_admin_final_99")
         
-        # CHEIE UNICĂ 3 pentru butonul de salvare
-        if st.button("💾 Salvează Extragerea", key="save_extragere_unique_v1"):
+        if st.button("💾 Salvează Extragerea", key="btn_save_final_99"):
             try:
                 numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
                 if len(numere) == 20:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem)
                     st.success("✅ Salvat!"); st.rerun()
-            except: st.error("Eroare format!")
-
+                else:
+                    st.error("Pune fix 20 de numere!")
+            except:
+                st.error("Eroare format!")
     # --- 3. GESTIONARE DATE (Unde bagi extragerea nouă) ---
     with st.expander("⚙️ GESTIONARE DATE", expanded=False):
         raw_input = st.text_input("Introdu extragerea nouă (20 nr):")
@@ -295,6 +296,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
