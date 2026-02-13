@@ -80,31 +80,46 @@ if este_admin:
                 salveaza_tot(date_sistem)
                 st.rerun()
                 if este_admin:
-    # --- AICI ADAUGI VERIFICATORUL AUTOMAT ---
-    with st.sidebar.expander("📋 VERIFICARE BILETE (AUTO)", expanded=True):
+    VERIFICARE BILETE (AUTO)", expanded=True):
+        # Luăm ultima extragere (primul set de 20 nr din arhivă)
         if date_sistem.get("generari") and date_sistem.get("extrageri"):
-            # Luăm ultima extragere (primul set de 20 nr)
             ultima_ex = set(date_sistem["extrageri"][0]) 
-            st.write(f"Verificăm cu: `{sorted(list(ultima_ex))}`")
+            st.write(f"Ultima extragere: `{sorted(list(ultima_ex))}`")
             
             for g in date_sistem["generari"]:
                 nimerite = set(g["numere"]) & ultima_ex
                 count = len(nimerite)
-                
-                # Afișăm rezultatul colorat
                 if count >= 3:
                     st.success(f"💰 {g['metoda']} | {g['numere']} -> {count} NR!")
                 elif count == 2:
                     st.warning(f"🥈 {g['metoda']} | {g['numere']} -> 2 NR")
                 else:
-                    # Pentru 0 sau 1 nr, scriem discret
                     st.write(f"⚪ {g['ora']} | {count} nr")
         else:
-            st.info("Nicio generare sau extragere găsită pentru verificare.")
+            st.info("Nicio generare sau extragere pentru verificare.")
 
-    # Aici continuă restul de GESTIONARE DATE (Salvare/Ștergere)
-    with st.expander("⚙️ GESTIONARE DATE", expanded=False):
-        # ... codul tău de salvare ...
+    # --- 2. ISTORICUL TABELAR (Sub Verificator) ---
+    with st.sidebar.expander("📋 ISTORIC TABEL"):
+        if date_sistem.get("generari"):
+            df_istoric = pd.DataFrame(date_sistem["generari"])
+            df_istoric['numere'] = df_istoric['numere'].astype(str)
+            st.dataframe(df_istoric, use_container_width=True)
+            if st.button("🗑️ Reset Complet"): 
+                date_sistem["generari"] = []
+                salveaza_tot(date_sistem)
+                st.rerun()
+
+    # --- 3. GESTIONARE DATE (Unde bagi extragerea nouă) ---
+    with st.expander("⚙️ GESTIONARE DATE (BAGĂ EXTRAGEREA)"):
+        raw_input = st.text_input("Introdu extragerea nouă (20 nr):")
+        if st.button("💾 Salvează Extragerea"):
+            try:
+                numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
+                if len(numere) == 20:
+                    date_sistem["extrageri"].insert(0, numere)
+                    salveaza_tot(date_sistem)
+                    st.success("✅ Salvat!"); st.rerun()
+            except: st.error("Eroare format!")
 
 # --- LOGICA DATE ---
 date_loto = date_sistem.get("extrageri", [])
@@ -235,6 +250,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
