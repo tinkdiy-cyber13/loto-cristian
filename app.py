@@ -150,10 +150,25 @@ with tab_f2:
                 vars = [random.sample(fierbinti_u3, 2) + random.sample(calde, 2) for _ in range(5)]
                 log_generare("2F+2Calde", vars)
                 for v in vars: st.error(f"4: {sorted(v)}")
-        if st.button("5️⃣ 3 FIERBINȚI", use_container_width=True):
-            vars = [random.sample(fierbinti_u3, 3) for _ in range(9)]
-            log_generare("3Fierbinti", vars)
-            for v in vars: st.warning(f"5: {sorted(v)}")
+       # --- TUNING SPECIAL BUTONUL 5 GOLD ---
+        st.divider()
+        st.markdown("""<style> div.stButton > button[key="btn_3_fierbinti_gold"] {
+            background-color: #FFD700 !important; 
+            color: #000000 !important; 
+            border: 2px solid #FFA500 !important; 
+            box-shadow: 0px 0px 15px rgba(255, 215, 0, 0.6) !important;
+            font-size: 16px !important;
+        }</style>""", unsafe_allow_html=True)
+
+        if st.button("🥇 3 FIERBINȚI (Sistem Gold)", use_container_width=True, key="btn_3_fierbinti_gold"):
+            if len(fierbinti_u3) >= 3:
+                vars = [random.sample(fierbinti_u3, 3) for _ in range(5)]
+                log_generare("3 FIERBINTI GOLD", vars)
+                st.balloons()
+                for v in vars:
+                    st.info(f"💎 **{sorted(v)}**")
+            else:
+                st.warning("Așteptăm să se 'încingă' numerele (minim 3 necesare)!")
 
 with tab_649:
     st.subheader("🍀 JOC 6/49 - 5 Variante")
@@ -194,6 +209,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
