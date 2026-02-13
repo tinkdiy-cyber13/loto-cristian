@@ -69,11 +69,13 @@ st.sidebar.subheader("🔐 Control Admin")
 parola_introdusa = st.sidebar.text_input("Parola:", type="password")
 este_admin = (parola_introdusa == PAROLA_ADMIN)
 
-# --- 1. VERIFICATORUL AUTOMAT (Sub Parolă) ---
+if este_admin:
+    # --- 1. VERIFICATORUL AUTOMAT (Sub Parolă) ---
     with st.sidebar.expander("📋 VERIFICARE BILETE (AUTO)", expanded=True):
         if date_sistem.get("generari") and date_sistem.get("extrageri"):
-            # Luăm ultima extragere salvată (care este o listă de 20 nr)
-            ultima_ex = set(date_sistem["extrageri"][0]) if isinstance(date_sistem["extrageri"][0], list) else set(date_sistem["extrageri"])
+            # Luăm prima listă de 20 nr (cea mai recentă)
+            u_ex = date_sistem["extrageri"][0]
+            ultima_ex = set(u_ex) if isinstance(u_ex, list) else set()
             st.write(f"Verificăm cu: `{sorted(list(ultima_ex))}`")
             
             for g in date_sistem["generari"]:
@@ -85,7 +87,10 @@ este_admin = (parola_introdusa == PAROLA_ADMIN)
                     st.warning(f"🥈 {g['metoda']} | {g['numere']} -> 2 NR")
                 else:
                     st.write(f"⚪ {g['ora']} | {count} nr")
-    # --- 2. ISTORICUL TABELAR (Sub Verificator) ---
+        else:
+            st.info("Nicio dată disponibilă.")
+
+    # --- 2. ISTORICUL TABELAR ---
     with st.sidebar.expander("📋 ISTORIC TABEL"):
         if date_sistem.get("generari"):
             df_istoric = pd.DataFrame(date_sistem["generari"])
@@ -95,6 +100,7 @@ este_admin = (parola_introdusa == PAROLA_ADMIN)
                 date_sistem["generari"] = []
                 salveaza_tot(date_sistem)
                 st.rerun()
+
 
     # --- 3. GESTIONARE DATE (Unde bagi extragerea nouă) ---
     with st.expander("⚙️ GESTIONARE DATE (BAGĂ EXTRAGEREA)"):
@@ -260,6 +266,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
