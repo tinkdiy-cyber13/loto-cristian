@@ -70,11 +70,11 @@ parola_introdusa = st.sidebar.text_input("Parola:", type="password")
 este_admin = (parola_introdusa == PAROLA_ADMIN)
 
 if este_admin:
-    # --- 1. VERIFICATORUL AUTOMAT ---
+    # --- 1. VERIFICATORUL AUTOMAT (Sub Parolă) ---
     with st.sidebar.expander("📋 VERIFICARE BILETE (AUTO)", expanded=True):
         if date_sistem.get("generari") and date_sistem.get("extrageri"):
-            u_ex = date_sistem["extrageri"]
-            ultima_ex = set(u_ex) if isinstance(u_ex, list) else set(u_ex)
+            u_ex = date_sistem["extrageri"][0] if isinstance(date_sistem["extrageri"][0], list) else date_sistem["extrageri"]
+            ultima_ex = set(u_ex)
             st.write(f"Verificăm cu: `{sorted(list(ultima_ex))}`")
             for g in date_sistem["generari"]:
                 nimerite = set(g["numere"]) & ultima_ex
@@ -94,16 +94,15 @@ if este_admin:
             df_istoric = pd.DataFrame(date_sistem["generari"])
             df_istoric['numere'] = df_istoric['numere'].astype(str)
             st.dataframe(df_istoric, use_container_width=True)
-            if st.button("🗑️ Reset Complet Istoric", key="reset_final_v99"): 
+            if st.button("🗑️ Reset Complet Istoric", key="reset_final_v101"): 
                 date_sistem["generari"] = []
                 salveaza_tot(date_sistem)
                 st.rerun()
 
-    # --- 3. GESTIONARE DATE (AICI ERA EROAREA DE ALINIERE) ---
+    # --- 3. GESTIONARE DATE (REPARAT ALINIEREA AICI) ---
     with st.expander("⚙️ GESTIONARE DATE", expanded=False):
-        raw_input = st.text_input("Introdu extragerea nouă (20 nr):", key="input_extragere_v99")
-        # BUTONUL TREBUIE SĂ FIE EXACT SUB TEXT_INPUT (ALINIAT LA STÂNGA)
-        if st.button("💾 Salvează Extragerea", key="save_extragere_v99"):
+        raw_input = st.text_input("Introdu extragerea nouă (20 nr):", key="input_extragere_v101")
+        if st.button("💾 Salvează Extragerea", key="save_extragere_v101"):
             try:
                 numere = [int(n) for n in raw_input.replace(",", " ").split() if n.strip().isdigit()]
                 if len(numere) == 20:
@@ -114,6 +113,7 @@ if este_admin:
                     st.error("Pune fix 20 de numere!")
             except:
                 st.error("Eroare format!")
+                
     # --- 3. GESTIONARE DATE (Unde bagi extragerea nouă) ---
     with st.expander("⚙️ GESTIONARE DATE", expanded=False):
         raw_input = st.text_input("Introdu extragerea nouă (20 nr):")
@@ -292,6 +292,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
