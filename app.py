@@ -157,7 +157,7 @@ with tab1:
         numere_3 = [n for sub in date_loto[:3] for n in sub]
         pool_3 = list(set(numere_3))
         if st.button("👑 REGELE (90%)", use_container_width=True):
-            vars = [random.sample(pool_3, 4) for _ in range(18)]
+            vars = [random.sample(pool_3, 3) for _ in range(18)]
             log_generare("Regele 90%", vars); st.balloons()
             for v in vars: st.success(f"🍀 {sorted(v)}")
         
@@ -288,6 +288,7 @@ if este_admin:
                     date_sistem["extrageri"].insert(0, numere)
                     salveaza_tot(date_sistem); st.rerun()
             except: st.error("Format invalid!")
+
 
 
 
