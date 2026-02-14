@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 st.set_page_config(page_title="Loto Pro v11.9.6", page_icon="🎰", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
-PAROLA_ADMIN = "admin13$333$13"
+PAROLA_ADMIN = "admin13$111$13"
 
 def get_ora_ro():
     return (datetime.utcnow() + timedelta(hours=2)).strftime("%d-%m %H:%M")
@@ -151,6 +151,7 @@ with tab3:
         df.index = [f"{zile[(ieri - timedelta(days=(i//2))).weekday()]}{i+1}" for i in range(len(df))]
         st.dataframe(df, use_container_width=True)
     else: st.info("Arhiva e goală. Mergi la Admin și adaugă extrageri!")
+
 
 
 
