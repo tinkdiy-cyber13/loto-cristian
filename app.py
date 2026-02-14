@@ -152,6 +152,17 @@ with tab3:
         st.dataframe(df, use_container_width=True)
     else: st.info("Arhiva e goală. Mergi la Admin și adaugă extrageri!")
 
+# --- MESAJE ---
+st.divider()
+with st.expander("📩 Trimite mesaj"):
+    msg = st.text_area("Mesaj:")
+    if st.button("🚀 Trimite"):
+        date_sistem["mesaje"].append({"data": time.strftime("%d-%m %H:%M"), "text": msg})
+        salveaza_tot(date_sistem); st.success("Trimis!"); st.rerun()
+
+if este_admin:
+    st.subheader("📬 Inbox")
+    for m in reversed(date_sistem["mesaje"]): st.info(f"{m['data']}: {m['text']}")
 
 
 
