@@ -8,7 +8,7 @@ import time
 from datetime import datetime, timedelta
 
 # CONFIGURARE
-st.set_page_config(page_title="Loto Pro v11.9.6", page_icon="🎰", layout="centered")
+st.set_page_config(page_title=" LP v19.6", page_icon="🎰", layout="centered")
 
 DB_FILE = "baza_date_cristian.json"
 PAROLA_ADMIN = "admin13$111$13"
@@ -63,7 +63,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- HEADER & OO ---
-st.title("🍀 Loto Pro v11.9.5")
+st.title("🍀  LP v19.6")
 st.markdown(f"<div style='text-align: right; margin-top: -55px;'><span style='color: #22d3ee; font-size: 16px; font-weight: bold; border: 2px solid #22d3ee; padding: 4px 12px; border-radius: 15px; background-color: rgba(34, 211, 238, 0.1);'>OO: {date_sistem.get('vizite', 0)}</span></div>", unsafe_allow_html=True)
 
 # --- SIDEBAR ---
@@ -163,6 +163,7 @@ with st.expander("📩 Trimite mesaj"):
 if este_admin:
     st.subheader("📬 Inbox")
     for m in reversed(date_sistem["mesaje"]): st.info(f"{m['data']}: {m['text']}")
+
 
 
 
